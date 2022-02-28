@@ -1,0 +1,25 @@
+name: HungerProtection
+version: ${project.version}
+main: com.gmail.creepycucumber1.hungerprotection.HungerProtection
+api-version: 1.18
+authors: [longbread, ItsGJK]
+description: HungerProtection Core
+depend: [Vault]
+softdepend: [Essentials]
+commands:
+  accesstrust:
+    description: Trust another player to use buttons etc. in your claim(s)
+  claim:
+    description: Instantly claim a 5x5 plot of land
+  claims:
+    description: List all of your claims
+  claimtop:
+    description: Get a leaderboard of the top claimers on the server
+  containertrust:
+    description: Trust another player to open containers in your claim(s)
+  transferclaim:
+    description: Transfer ownership of a claim to another player
+  trust:
+    description: Trust another player to build in your claim(s)
+  untrust:
+    description: Strip another player's permissions in your claim(s)
