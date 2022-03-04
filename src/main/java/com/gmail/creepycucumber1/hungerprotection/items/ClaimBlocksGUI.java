@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+
 public class ClaimBlocksGUI extends GUI {
     private Player player;
 
@@ -14,19 +16,28 @@ public class ClaimBlocksGUI extends GUI {
         super(plugin, player.getUniqueId(), "Buy Claim Blocks", 1);
         this.player = player;
 
+        ItemStack info = new ItemStack(Material.PAPER);
+        ItemMeta infoMeta = info.getItemMeta();
+        infoMeta.setDisplayName(TextUtil.convertColor("&7Current claim blocks: &f" + plugin.getPlayerManager().getClaimBlocks(player)));
+        info.setItemMeta(infoMeta);
+
         ItemStack dirt = new ItemStack(Material.DIRT);
         ItemMeta dirtMeta = dirt.getItemMeta();
         dirtMeta.setDisplayName(TextUtil.convertColor("&6Buy 1 claim block &e$2"));
         dirt.setItemMeta(dirtMeta);
+
         ItemStack grass = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta grassMeta = dirt.getItemMeta();
         grassMeta.setDisplayName(TextUtil.convertColor("&6Buy 10 claim blocks &e$20"));
         grass.setItemMeta(grassMeta);
+
         ItemStack moss = new ItemStack(Material.MOSS_BLOCK);
         ItemMeta mossMeta = dirt.getItemMeta();
         mossMeta.setDisplayName(TextUtil.convertColor("&6Buy 100 claim blocks &e$200"));
         moss.setItemMeta(mossMeta);
 
+        GUIItem infoItem = new GUIItem(info, "info");
+        items[0] = infoItem;
         GUIItem dirtItem = new GUIItem(dirt, "dirt");
         items[2] = dirtItem;
         GUIItem grassItem = new GUIItem(grass, "grass");
@@ -49,6 +60,7 @@ public class ClaimBlocksGUI extends GUI {
                 return;
             }
             plugin.getVault().withdrawPlayer(p, 2);
+            plugin.getPlayerManager().addClaimBlocks(player, 1);
             p.sendMessage(TextUtil.convertColor("&6You have purchased &e1 &6claim block for &e$2."));
         }
         else if(item.getItem().getType().equals(Material.GRASS_BLOCK)) {
@@ -57,6 +69,7 @@ public class ClaimBlocksGUI extends GUI {
                 return;
             }
             plugin.getVault().withdrawPlayer(p, 20);
+            plugin.getPlayerManager().addClaimBlocks(player, 10);
             p.sendMessage(TextUtil.convertColor("&6You have purchased &e10 &6claim blocks for &e$20."));
         }
         else if(item.getItem().getType().equals(Material.MOSS_BLOCK)) {
@@ -65,6 +78,7 @@ public class ClaimBlocksGUI extends GUI {
                 return;
             }
             plugin.getVault().withdrawPlayer(p, 200);
+            plugin.getPlayerManager().addClaimBlocks(player, 100);
             p.sendMessage(TextUtil.convertColor("&6You have purchased &e100 &6claim blocks for &e$200."));
         }
     }

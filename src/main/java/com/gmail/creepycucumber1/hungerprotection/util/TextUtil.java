@@ -1,6 +1,11 @@
 package com.gmail.creepycucumber1.hungerprotection.util;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -57,5 +62,12 @@ public class TextUtil {
         }
 
         return sb.substring(0, sb.length()-1);
+    }
+
+    public static void sendClickableCommand(Player player, String message, String command, String hover) {
+        TextComponent component = new TextComponent(TextUtil.convertColor(message));
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create()));
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+        player.spigot().sendMessage(component);
     }
 }

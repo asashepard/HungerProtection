@@ -1,10 +1,14 @@
 package com.gmail.creepycucumber1.hungerprotection.claim;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class PlayerManager {
 
@@ -22,6 +26,10 @@ public class PlayerManager {
         HashMap<String, Object> map = new HashMap<>();
         map.put("claimBlocks", 2000);
         map.put("accruedBlocks", 0);
+        map.put("isClaiming", false);
+        map.put("activeCID", "none"); //for resizing claims
+        map.put("x1", Integer.MAX_VALUE);
+        map.put("z1", Integer.MAX_VALUE);
 
         plugin.getDataManager().getConfig().createSection("players." + uuid, map);
         plugin.getDataManager().saveConfig();
@@ -46,7 +54,49 @@ public class PlayerManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void setIsClaiming(Player player, boolean bool) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        cfg.set("isClaiming", bool);
+        plugin.getDataManager().saveConfig();
+    }
+
+    public void setActiveCID(Player player, String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        cfg.set("activeCID", claimID);
+        plugin.getDataManager().saveConfig();
+    }
+
+    public void setX1(Player player, int x1) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        cfg.set("x1", x1);
+        plugin.getDataManager().saveConfig();
+    }
+
+    public void setZ1(Player player, int z1) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        cfg.set("z1", z1);
+        plugin.getDataManager().saveConfig();
+    }
+
+    public void resetCurrentClaimingData(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        cfg.set("isClaiming", false);
+        cfg.set("activeCID", "none");
+        cfg.set("x1", Integer.MAX_VALUE);
+        cfg.set("z1", Integer.MAX_VALUE);
+        plugin.getDataManager().saveConfig();
+    }
+
     //getter
+    public ArrayList<OfflinePlayer> getPlayers() {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players");
+        ArrayList<OfflinePlayer> players = new ArrayList<>();
+        for(String uuidString : cfg.getKeys(false)) {
+            players.add(Bukkit.getOfflinePlayer(UUID.fromString(uuidString)));
+        }
+        return players;
+    }
+
     public int getClaimBlocks(Player player) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
         return cfg.getInt("claimBlocks");
@@ -55,6 +105,26 @@ public class PlayerManager {
     public int getAccruedBlocks(Player player) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
         return cfg.getInt("accruedBlocks");
+    }
+
+    public boolean isClaiming(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        return cfg.getBoolean("isClaiming");
+    }
+
+    public String getActiveCID(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        return cfg.getString("activeCID");
+    }
+
+    public int getX1(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        return cfg.getInt("x1");
+    }
+
+    public int getZ1(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        return cfg.getInt("z1");
     }
 
 }

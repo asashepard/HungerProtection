@@ -40,9 +40,13 @@ public class GeneralMonitor {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if(player.getInventory().getItemInMainHand().equals(ClaimTool.claimTool)) {
-                        String claimID = plugin.getClaimManager().getClaim(player.getLocation());
-                        if(!claimID.equalsIgnoreCase("none") && plugin.getClaimManager().getOwner(claimID).getPlayer().equals(player))
+                        String claimID = plugin.cm().getClaim(player.getLocation());
+                        if(!claimID.equalsIgnoreCase("none") && plugin.cm().getOwner(claimID).getPlayer().equals(player))
                             PacketManager.highlightClaim(player, claimID, false);
+                    }
+                    else {
+                        if(plugin.getPlayerManager().isClaiming(player))
+                            plugin.getPlayerManager().resetCurrentClaimingData(player);
                     }
                 });
             }

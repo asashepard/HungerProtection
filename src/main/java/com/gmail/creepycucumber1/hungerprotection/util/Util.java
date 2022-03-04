@@ -12,21 +12,21 @@ public class Util {
     private static HungerProtection plugin;
 
     public static boolean getHasPermission(Player p, Location loc, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
-        String claimID = plugin.getClaimManager().getClaim(loc);
+        String claimID = plugin.cm().getClaim(loc);
 
         if(claimID.equalsIgnoreCase("none")) return true; //no claim at location
         if(p.isOp()) return true; //player is operator
 
         int level = Integer.MAX_VALUE;
 
-        if(plugin.getClaimManager().getOwner(claimID).equals(p)) level = 1; //is claim owner
-        else if(plugin.getClaimManager().getBuilders(claimID).contains(p)) level = 2; //has build permission
-        else if(plugin.getClaimManager().getContainer(claimID).contains(p)) level = 3; //has container permission
-        else if(plugin.getClaimManager().getAccess(claimID).contains(p)) level = 4; //has access permission
+        if(plugin.cm().getOwner(claimID).equals(p)) level = 1; //is claim owner
+        else if(plugin.cm().getBuilders(claimID).contains(p)) level = 2; //has build permission
+        else if(plugin.cm().getContainer(claimID).contains(p)) level = 3; //has container permission
+        else if(plugin.cm().getAccess(claimID).contains(p)) level = 4; //has access permission
 
         if(level > requiredLevel)
             p.sendMessage(TextUtil.convertColor("&cThat block is claimed by " +
-                    (plugin.getClaimManager().getIsAdmin(claimID) ? "an administrator" : plugin.getClaimManager().getOwner(claimID).getName())));
+                    (plugin.cm().getIsAdmin(claimID) ? "an administrator" : plugin.cm().getOwner(claimID).getName())));
         return level <= requiredLevel;
     }
 

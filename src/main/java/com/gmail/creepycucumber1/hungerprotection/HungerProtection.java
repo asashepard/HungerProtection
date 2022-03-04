@@ -8,6 +8,7 @@ import com.gmail.creepycucumber1.hungerprotection.event.EventManager;
 import com.gmail.creepycucumber1.hungerprotection.event.PacketManager;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimInspectionTool;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
+import com.gmail.creepycucumber1.hungerprotection.items.GUIManager;
 import com.gmail.creepycucumber1.hungerprotection.runnable.GeneralMonitor;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import net.ess3.api.IEssentials;
@@ -30,6 +31,7 @@ public final class HungerProtection extends JavaPlugin {
     private DataManager dataManager;
     private ClaimManager claimManager;
     private PlayerManager playerManager;
+    private GUIManager guiManager;
 
     public static HungerProtection plugin;
 
@@ -46,6 +48,7 @@ public final class HungerProtection extends JavaPlugin {
         dataManager = new DataManager(this);
         claimManager = new ClaimManager(this);
         playerManager = new PlayerManager(this);
+        guiManager = new GUIManager(this);
 
         commands = new ArrayList<>(registerCommands());
 
@@ -122,11 +125,14 @@ public final class HungerProtection extends JavaPlugin {
     public DataManager getDataManager() {
         return dataManager;
     }
-    public ClaimManager getClaimManager() {
+    public ClaimManager cm() {
         return claimManager;
     }
     public PlayerManager getPlayerManager() {
         return playerManager;
+    }
+    public GUIManager getGuiManager() {
+        return guiManager;
     }
 
 }

@@ -9,14 +9,22 @@ softdepend: [Essentials]
 commands:
   accesstrust:
     description: Trust another player to use buttons etc. in your claim(s)
+    aliases:
+      - at
+  buyclaimblocks:
+    description: Buy claim blocks
   claim:
     description: Instantly claim a 5x5 plot of land
+  claimexplosions:
+    description: Toggle explosions within a claim or subdivision
   claims:
     description: List all of your claims
   claimtop:
     description: Get a leaderboard of the top claimers on the server
   containertrust:
     description: Trust another player to open containers in your claim(s)
+    aliases:
+      - ct
   transferclaim:
     description: Transfer ownership of a claim to another player
   trust:

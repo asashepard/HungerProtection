@@ -1,6 +1,7 @@
 package com.gmail.creepycucumber1.hungerprotection.event;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
+import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
 import com.gmail.creepycucumber1.hungerprotection.util.Util;
 import io.netty.channel.*;
 import net.minecraft.network.PacketListener;
@@ -10,7 +11,6 @@ import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.BoundingBox;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class PacketManager implements Listener {
@@ -95,8 +96,8 @@ public class PacketManager implements Listener {
 
     public static void highlightClaim(Player player, String claimID, boolean obstructing) {
         String type = "";
-        if(plugin.getClaimManager().getIsAdmin(claimID)) type = "admin";
-        else if(plugin.getClaimManager().getOwner(claimID).equals(player)) type = "player";
+        if(plugin.cm().getIsAdmin(claimID)) type = "admin";
+        else if(plugin.cm().getOwner(claimID).equals(player)) type = "player";
         else if(obstructing) type = "obstructing";
 
         Material material1 = Material.SEA_LANTERN;
@@ -116,44 +117,86 @@ public class PacketManager implements Listener {
             }
         }
 
-        BoundingBox box = plugin.getClaimManager().getBoundingBox(claimID);
+        BoundingBox box = plugin.cm().getBoundingBox(claimID);
+
+        highlightArea(player, box, material1, material2, 6);
+
+        if(!player.equals(plugin.cm().getOwner(claimID))) return;
+        for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
+            highlightArea(player, subdivision.getBoundingBox(), Material.SEA_LANTERN, Material.IRON_BLOCK, 6);
+        }
+
+    }
+
+    public static void highlightArea(Player player, BoundingBox box, Material material1, Material material2, int step) {
+
+        HashMap<Location, Material> changed = new HashMap<>(); //location, original material before change
 
         //corners
         for(int x : List.of((int) box.getMinX(), (int) box.getMaxX()))
-            for(int z : List.of((int) box.getMinZ(), (int) box.getMaxZ()))
-                ((CraftPlayer) player).sendBlockChange(Util.getHighest(player, x, z), material1, (byte) 0);
+            for(int z : List.of((int) box.getMinZ(), (int) box.getMaxZ())) {
+                Location loc = Util.getHighest(player, x, z);
+                changed.put(loc, loc.getBlock().getType());
+                ((CraftPlayer) player).sendBlockChange(loc, material1, (byte) 0);
+            }
 
         //sides
         int x = (int) box.getMinX();
         int z = (int) box.getMinZ();
         //x+
         while(x < (int) box.getMaxX()) {
-            if(x != box.getMinX() && x != box.getMaxX())
-                ((CraftPlayer) player).sendBlockChange(Util.getHighest(player, x, z), material2, (byte) 0);
-            x += 6;
+            if(x != box.getMinX() && x != box.getMaxX()) {
+                Location loc = Util.getHighest(player, x, z);
+                changed.put(loc, loc.getBlock().getType());
+                ((CraftPlayer) player).sendBlockChange(loc, material2, (byte) 0);
+            }
+            x += step;
         }
         x = (int) box.getMaxX();
         //z+
         while(z < (int) box.getMaxZ()) {
-            if(z != box.getMinZ() && z != box.getMaxZ())
-                ((CraftPlayer) player).sendBlockChange(Util.getHighest(player, x, z), material2, (byte) 0);
-            z += 6;
+            if(z != box.getMinZ() && z != box.getMaxZ()) {
+                Location loc = Util.getHighest(player, x, z);
+                changed.put(loc, loc.getBlock().getType());
+                ((CraftPlayer) player).sendBlockChange(loc, material2, (byte) 0);
+            }
+            z += step;
         }
         z = (int) box.getMaxZ();
         //x-
         while(x > (int) box.getMinX()) {
-            if(x != box.getMinX() && x != box.getMaxX())
-                ((CraftPlayer) player).sendBlockChange(Util.getHighest(player, x, z), material2, (byte) 0);
-            x -= 6;
+            if(x != box.getMinX() && x != box.getMaxX()) {
+                Location loc = Util.getHighest(player, x, z);
+                changed.put(loc, loc.getBlock().getType());
+                ((CraftPlayer) player).sendBlockChange(loc, material2, (byte) 0);
+            }
+            x -= step;
         }
         x = (int) box.getMinX();
         //z-
         while(z > (int) box.getMinZ()) {
-            if(z != box.getMinZ() && z != box.getMaxZ())
-                ((CraftPlayer) player).sendBlockChange(Util.getHighest(player, x, z), material2, (byte) 0);
-            z -= 6;
+            if(z != box.getMinZ() && z != box.getMaxZ()) {
+                Location loc = Util.getHighest(player, x, z);
+                changed.put(loc, loc.getBlock().getType());
+                ((CraftPlayer) player).sendBlockChange(loc, material2, (byte) 0);
+            }
+            z -= step;
         }
 
+        Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+            //reset all changed blocks later
+            @Override
+            public void run() {
+                for(Location loc : changed.keySet()) {
+                    Material material = changed.get(loc);
+                    ((CraftPlayer) player).sendBlockChange(loc, material, (byte) 0);
+                }
+            }
+        }, 400); //20 seconds
+    }
+
+    public static void highlightBlock(Player player, Location location, Material material) {
+        ((CraftPlayer) player).sendBlockChange(location, material, (byte) 0);
     }
 
 }
