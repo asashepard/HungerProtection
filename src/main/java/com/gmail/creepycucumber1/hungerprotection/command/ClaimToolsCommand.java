@@ -38,7 +38,8 @@ public class ClaimToolsCommand extends CommandBase {
         }
 
         player.getInventory().setItem(emptySlots.get(0), ClaimTool.claimTool);
-        player.getInventory().setItem(emptySlots.get(0), ClaimInspectionTool.claimInspectionTool);
+        player.getInventory().setItem(emptySlots.get(1), ClaimInspectionTool.claimInspectionTool);
+        plugin.getPlayerManager().setLastToolsToNow(player);
 
         return true;
     }

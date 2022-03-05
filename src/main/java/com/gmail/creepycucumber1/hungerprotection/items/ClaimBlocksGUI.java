@@ -62,6 +62,9 @@ public class ClaimBlocksGUI extends GUI {
             plugin.getVault().withdrawPlayer(p, 2);
             plugin.getPlayerManager().addClaimBlocks(player, 1);
             p.sendMessage(TextUtil.convertColor("&6You have purchased &e1 &6claim block for &e$2."));
+
+            p.closeInventory();
+            plugin.getGuiManager().openGUI(p, new ClaimBlocksGUI(plugin, p));
         }
         else if(item.getItem().getType().equals(Material.GRASS_BLOCK)) {
             if(plugin.getVault().getBalance(p) < 20) {
@@ -71,6 +74,9 @@ public class ClaimBlocksGUI extends GUI {
             plugin.getVault().withdrawPlayer(p, 20);
             plugin.getPlayerManager().addClaimBlocks(player, 10);
             p.sendMessage(TextUtil.convertColor("&6You have purchased &e10 &6claim blocks for &e$20."));
+
+            p.closeInventory();
+            plugin.getGuiManager().openGUI(p, new ClaimBlocksGUI(plugin, p));
         }
         else if(item.getItem().getType().equals(Material.MOSS_BLOCK)) {
             if(plugin.getVault().getBalance(p) < 200) {
@@ -80,6 +86,9 @@ public class ClaimBlocksGUI extends GUI {
             plugin.getVault().withdrawPlayer(p, 200);
             plugin.getPlayerManager().addClaimBlocks(player, 100);
             p.sendMessage(TextUtil.convertColor("&6You have purchased &e100 &6claim blocks for &e$200."));
+
+            p.closeInventory();
+            plugin.getGuiManager().openGUI(p, new ClaimBlocksGUI(plugin, p));
         }
     }
 }

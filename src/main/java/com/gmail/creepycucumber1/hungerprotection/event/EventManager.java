@@ -7,6 +7,7 @@ import com.gmail.creepycucumber1.hungerprotection.items.ClaimInspectionTool;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.util.BoundingBox;
@@ -32,6 +34,12 @@ public class EventManager implements Listener {
         Player player = e.getPlayer();
         if(plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString()) == null)
             plugin.getPlayerManager().createNewPlayer(player);
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        boolean res = plugin.getGuiManager().onClick(Bukkit.getPlayer(e.getWhoClicked().getUniqueId()), e.getCurrentItem(), e.getView());
+        if(res) e.setCancelled(true);
     }
 
     @EventHandler
@@ -81,9 +89,8 @@ public class EventManager implements Listener {
                     }
                     //first part of a new claim
                     PacketManager.highlightBlock(p, location, Material.GLOWSTONE);
-                    plugin.getPlayerManager().setIsClaiming(p, true);
+                    pm.setIsClaiming(p, true);
                     p.sendMessage(TextUtil.convertColor("&6Creating new claim! Click on another block to finish."));
-                    return;
                 }
                 //p owns the claim
                 else {
@@ -112,7 +119,7 @@ public class EventManager implements Listener {
                     //first or second of subdivision
                     else {
                         //first
-                        if(pm.isClaiming(p)) {
+                        if(!pm.isClaiming(p)) {
                             pm.setIsClaiming(p, true);
                             pm.setX1(p, x);
                             pm.setZ1(p, z);

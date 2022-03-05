@@ -82,12 +82,12 @@ public class PacketManager implements Listener {
         //block breaking (level = 2)
         if(packet instanceof ServerboundPlayerActionPacket pkt) {
             if(pkt.getAction() == ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK) {
-                return Util.getHasPermission(player, new Location(player.getWorld(),
+                return plugin.cm().getHasPermission(player, new Location(player.getWorld(),
                         pkt.getPos().getX(), pkt.getPos().getY(), pkt.getPos().getZ()), 2);
             }
         }
         else if(packet instanceof ClientboundBlockBreakAckPacket pkt) {
-            return Util.getHasPermission(player, new Location(player.getWorld(),
+            return plugin.cm().getHasPermission(player, new Location(player.getWorld(),
                     pkt.pos().getX(), pkt.pos().getY(), pkt.pos().getZ()), 2);
         }
         //todo add more later (entities, containers, buttons, etc.)

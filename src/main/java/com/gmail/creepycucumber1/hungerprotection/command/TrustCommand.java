@@ -50,7 +50,7 @@ public class TrustCommand extends CommandBase {
             int count = 0;
             for(String cid : plugin.cm().getClaims(player)) {
                 if(!plugin.cm().getHasPermission(toAdd, cid, 2))
-                    plugin.cm().addAccess(toAdd, cid);
+                    plugin.cm().addBuilder(toAdd, cid);
                 count++;
             }
             player.sendMessage(TextUtil.convertColor("&aSuccessfully trusted " + args[0] + " in all " + count + " claims you own."));
@@ -60,7 +60,7 @@ public class TrustCommand extends CommandBase {
             player.sendMessage(TextUtil.convertColor("&cThat player is already trusted in this claim."));
             return true;
         }
-        plugin.cm().addAccess(toAdd, claimID);
+        plugin.cm().addBuilder(toAdd, claimID);
         player.sendMessage(TextUtil.convertColor("&aSuccessfully trusted " + args[0] + " in this claim."));
 
         return false;

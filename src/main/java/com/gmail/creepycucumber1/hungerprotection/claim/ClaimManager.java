@@ -25,24 +25,31 @@ public class ClaimManager {
 
     public boolean createNewClaim(int x1, int z1, int x2, int z2, boolean isAdmin, String worldName, Player owner) {
         //--perform checks--
+        Bukkit.getLogger().info("creating new claim"); //todo
 
         //overlaps another claim
         World world = Bukkit.getWorld(worldName);
         BoundingBox box = new BoundingBox(x1, z1, world.getMinHeight(), x2, z2, world.getMaxHeight());
         if(overlaps(box, world, owner, "")) return false;
 
+        Bukkit.getLogger().info("1"); //todo
+
         //price management
         int size = Math.abs(x2 - x1) * Math.abs(z2 - z1);
-        if(plugin.getPlayerManager().getClaimBlocks(owner) < size) {
+        if(!isAdmin && plugin.getPlayerManager().getClaimBlocks(owner) < size) {
+            Bukkit.getLogger().info("no block"); //todo
             owner.sendMessage(TextUtil.convertColor("&cYou need " + (size - plugin.getPlayerManager().getClaimBlocks(owner)) + " more claim blocks to claim this area."));
-            TextUtil.sendClickableCommand(owner, TextUtil.convertColor("&6&nBuy claim blocks"), "/buyclaimblocks", "Open the claim blocks GUI");
+            TextUtil.sendClickableCommand(owner, TextUtil.convertColor("&6&nBuy claim blocks"), "/buyclaimblocks", "Open the claim blocks menu");
             return false;
         }
+
+        Bukkit.getLogger().info("2"); //todo
 
         //--create claim--
 
         //generate unique identifier
-        String claimID = String.valueOf((int) (Math.random() * Integer.MAX_VALUE));
+        String claimID = UUID.randomUUID().toString();
+        Bukkit.getLogger().info("New claim created: " + claimID);
         //created
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm");
@@ -53,8 +60,6 @@ public class ClaimManager {
         ArrayList<String> accessTrusted = new ArrayList<>();
         //subdivisions
         ArrayList<Subdivision> subdivisions = new ArrayList<>();
-        //explosions
-        boolean explosions = false;
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("created", created);
@@ -66,11 +71,12 @@ public class ClaimManager {
         map.put("containerTrusted", containerTrusted);
         map.put("accessTrusted", accessTrusted);
         map.put("subdivisions", subdivisions);
-        map.put("explosions", explosions);
+        map.put("explosions", false);
 
         if(!isAdmin) plugin.getPlayerManager().removeClaimBlocks(owner, size);
         plugin.getDataManager().getConfig().createSection("claims." + claimID, map);
         plugin.getDataManager().saveConfig();
+        Bukkit.getLogger().info("config saved after claim creation"); //todo
 
         owner.sendMessage(TextUtil.convertColor("&6You have successfully made a claim!"));
         if(!isAdmin) owner.sendMessage(TextUtil.convertColor("You have " + plugin.getPlayerManager().getClaimBlocks(owner) + " claim blocks remaining."));
@@ -82,7 +88,7 @@ public class ClaimManager {
     public void removeClaim(String claimID) {
         boolean exists = false;
         for(String cid : plugin.getDataManager().getConfig().getConfigurationSection("claims").getKeys(false)) {
-            if (cid.equalsIgnoreCase(claimID)) {
+            if(cid.equalsIgnoreCase(claimID)) {
                 exists = true;
                 break;
             }
@@ -107,10 +113,10 @@ public class ClaimManager {
                 player.sendMessage(TextUtil.convertColor("&cThis selection overlaps an existing claim at " +
                         "(" + x1 + ", " + y1 + ") -> (" + x2 + ", " + y2 + ")."));
                 PacketManager.highlightClaim(player, key, true);
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     private boolean containsAllSubdivisions(BoundingBox box, ArrayList<Subdivision> subdivisions) {
@@ -162,38 +168,38 @@ public class ClaimManager {
 
     public void addBuilder(OfflinePlayer player, String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
-        ArrayList<OfflinePlayer> players = new ArrayList<>((ArrayList<OfflinePlayer>) cfg.getList("buildTrusted"));
-        players.add(player);
-        cfg.set("buildTrusted", players);
+        ArrayList<String> list = new ArrayList<>(cfg.getStringList("buildTrusted"));
+        list.add(player.getUniqueId().toString());
+        cfg.set("buildTrusted", list);
         plugin.getDataManager().saveConfig();
     }
 
     public void addContainer(OfflinePlayer player, String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
-        ArrayList<OfflinePlayer> players = new ArrayList<>((ArrayList<OfflinePlayer>) cfg.getList("containertrusted"));
-        players.add(player);
-        cfg.set("containerTrusted", players);
+        ArrayList<String> list = new ArrayList<>(cfg.getStringList("containerTrusted"));
+        list.add(player.getUniqueId().toString());
+        cfg.set("containerTrusted", list);
         plugin.getDataManager().saveConfig();
     }
 
     public void addAccess(OfflinePlayer player, String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
-        ArrayList<OfflinePlayer> players = new ArrayList<>((ArrayList<OfflinePlayer>) cfg.getList("accessTrusted"));
-        players.add(player);
-        cfg.set("accessTrusted", players);
+        ArrayList<String> list = new ArrayList<>(cfg.getStringList("accessTrusted"));
+        list.add(player.getUniqueId().toString());
+        cfg.set("accessTrusted", list);
         plugin.getDataManager().saveConfig();
     }
 
     public void removeTrust(OfflinePlayer player, String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
-        ArrayList<OfflinePlayer> at = new ArrayList<>((ArrayList<OfflinePlayer>) cfg.getList("accessTrusted"));
-        at.remove(player);
+        ArrayList<String> at = new ArrayList<>(cfg.getStringList("accessTrusted"));
+        at.add(player.getUniqueId().toString());
         cfg.set("accessTrusted", at);
-        ArrayList<OfflinePlayer> ct = new ArrayList<>((ArrayList<OfflinePlayer>) cfg.getList("containerTrusted"));
-        ct.remove(player);
+        ArrayList<String> ct = new ArrayList<>(cfg.getStringList("containerTrusted"));
+        ct.add(player.getUniqueId().toString());
         cfg.set("containerTrusted", ct);
-        ArrayList<OfflinePlayer> t = new ArrayList<>((ArrayList<OfflinePlayer>) cfg.getList("buildTrusted"));
-        t.remove(player);
+        ArrayList<String> t = new ArrayList<>(cfg.getStringList("buildTrusted"));
+        t.add(player.getUniqueId().toString());
         cfg.set("buildTrusted", t);
         plugin.getDataManager().saveConfig();
     }
@@ -321,6 +327,25 @@ public class ClaimManager {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         list.addAll((ArrayList<Subdivision>) cfg.getList("subdivisions"));
         return list;
+    }
+
+    public boolean getHasPermission(Player p, Location loc, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
+        String claimID = getClaim(loc);
+
+        if(claimID.equalsIgnoreCase("none")) return true; //no claim at location
+        if(p.isOp()) return true; //player is operator
+
+        int level = Integer.MAX_VALUE;
+
+        if(getOwner(claimID).equals(p)) level = 1; //is claim owner
+        else if(getBuilders(claimID).contains(p)) level = 2; //has build permission
+        else if(getContainer(claimID).contains(p)) level = 3; //has container permission
+        else if(getAccess(claimID).contains(p)) level = 4; //has access permission
+
+        if(level > requiredLevel)
+            p.sendMessage(TextUtil.convertColor("&cThat block is claimed by " +
+                    (getIsAdmin(claimID) ? "an administrator" : getOwner(claimID).getName())));
+        return level <= requiredLevel;
     }
 
     //print

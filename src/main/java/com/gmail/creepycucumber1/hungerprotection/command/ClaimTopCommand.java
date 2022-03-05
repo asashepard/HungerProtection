@@ -11,7 +11,8 @@ public class ClaimTopCommand extends CommandBase {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
 
-        //logic
+        //logic todo: replace debug with actual leaderboard
+        plugin.getDataManager().reloadConfig();
 
         return false;
     }

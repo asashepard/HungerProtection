@@ -56,11 +56,11 @@ public final class HungerProtection extends JavaPlugin {
             ess = (IEssentials) getServer().getPluginManager().getPlugin("Essentials");
 
             if(ess==null){
-                getLogger().warning("HungerClans failed to hook in with Essentials!");
+                getLogger().warning("HungerProtection failed to hook in with Essentials!");
             }
         }
         catch(Exception ex){
-            getLogger().warning("HungerClans failed to hook in with Essentials!");
+            getLogger().warning("HungerProtection failed to hook in with Essentials!");
         }
 
         if(getServer().getPluginManager().getPlugin("Vault") != null) {
@@ -79,12 +79,12 @@ public final class HungerProtection extends JavaPlugin {
         ClaimTool.init();
         ClaimInspectionTool.init();
 
-        getLogger().info("HungerClans has started.");
+        getLogger().info("HungerProtection has started.");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("HungerClans has been disabled.");
+        getLogger().info("HungerProtection has been disabled.");
     }
 
     @Override

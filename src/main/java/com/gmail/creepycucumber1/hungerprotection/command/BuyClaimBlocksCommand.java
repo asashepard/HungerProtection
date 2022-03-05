@@ -23,7 +23,7 @@ public class BuyClaimBlocksCommand extends CommandBase {
             plugin.getGuiManager().openGUI(player, new ClaimBlocksGUI(plugin, player));
             return true;
         }
-        int blocks = Integer.parseInt(args[1]);
+        int blocks = Integer.parseInt(args[0]);
         if(plugin.getVault().getBalance(player) < blocks * 2) {
             player.sendMessage(TextUtil.convertColor("&cYou need $" + (blocks * 2 - plugin.getVault().getBalance(player)) + " more to purchase " + blocks + " blocks."));
             return true;
@@ -31,9 +31,9 @@ public class BuyClaimBlocksCommand extends CommandBase {
         else {
             plugin.getVault().withdrawPlayer(player, blocks * 2);
             plugin.getPlayerManager().addClaimBlocks(player, blocks);
-            player.sendMessage(TextUtil.convertColor("&6You have purchased &e" + blocks + "&6claim block" + (blocks == 1 ? "s" : "") + "for &e$" + (blocks * 2) + "."));
+            player.sendMessage(TextUtil.convertColor("&6You have purchased &e" + blocks + " &6claim block" + (blocks == 1 ? "s" : "") + " for &e$" + (blocks * 2) + "."));
         }
 
-        return false;
+        return true;
     }
 }

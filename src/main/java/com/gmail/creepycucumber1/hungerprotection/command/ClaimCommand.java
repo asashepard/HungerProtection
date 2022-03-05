@@ -4,6 +4,7 @@ import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.event.PacketManager;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import net.minecraft.server.packs.repository.Pack;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,21 +17,23 @@ public class ClaimCommand extends CommandBase {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
 
-        if(!(sender instanceof Player)) {
+        Bukkit.getLogger().info("command received"); //todo
+        if(!(sender instanceof Player player)) {
             sender.sendMessage(TextUtil.convertColor("&cYou must be a player to use this command!"));
             return true;
         }
-        Player player = (Player) sender;
 
         if(args.length == 0) {
+            Bukkit.getLogger().info("no args"); //todo
             String claimID = plugin.cm().getClaim(player.getLocation());
             if(claimID.equalsIgnoreCase("none")) {
+                Bukkit.getLogger().info("none"); //todo
                 Block b = player.getLocation().getBlock();
                 int x1 = b.getX() - 2;
-                int y1 = b.getY() - 2;
+                int z1 = b.getZ() - 2;
                 int x2 = b.getX() + 2;
-                int y2 = b.getY() + 2;
-                if(plugin.cm().createNewClaim(x1, y1, x2, y2, player.isOp(), player.getWorld().getName(), player))
+                int z2 = b.getZ() + 2;
+                if(plugin.cm().createNewClaim(x1, z1, x2, z2, player.isOp(), player.getWorld().getName(), player))
                     player.sendMessage(TextUtil.convertColor("&eUse &o/claim help&r&e to see available actions."));
 
                 return true;
