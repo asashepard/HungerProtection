@@ -31,7 +31,7 @@ public class ClaimCommand extends CommandBase {
                 int x2 = b.getX() + 2;
                 int y2 = b.getY() + 2;
                 if(plugin.cm().createNewClaim(x1, y1, x2, y2, player.isOp(), player.getWorld().getName(), player))
-                    player.sendMessage(TextUtil.convertColor("&6Successfully created a new claim! Use &o/claim help&r&6 to see available actions."));
+                    player.sendMessage(TextUtil.convertColor("&eUse &o/claim help&r&e to see available actions."));
 
                 return true;
             }
@@ -41,13 +41,13 @@ public class ClaimCommand extends CommandBase {
 
         player.sendMessage(TextUtil.convertColor("&3&lClaim Commands: &r\n" +
                 " - &o/claim &r&7| create a new 5x5 claim&r\n" +
-                " - &o/kits &r&7| get claim tools to create and resize&r\n" +
+                " - &o/claimtool &r&7| get tools to manage claims&r\n" + //todo
                 " - &o/claims &r&7| list your claims&r\n" +
                 " - &o/claimtop &r&7| get server leaderboard&r\n" +
                 " - &o/buyclaimblocks [#] &r&7| buy claim blocks&r\n" +
-                " - &o/at &ror&o /atall [player] &r&7| accesstrust&r\n" +
-                " - &o/ct &ror&o /ctall [player] &r&7| containertrust&r\n" +
-                " - &o/trust &ror&o /trustall [player] &r&7| trust&r\n" +
+                " - &o/at [player] &r&7| accesstrust&r\n" +
+                " - &o/ct [player] &r&7| containertrust&r\n" +
+                " - &o/trust [player] &r&7| trust&r\n" +
                 " - &o/untrust [player] &r&7| untrust&r\n" +
                 " - &o/transferclaim [player] &r&7| transfer claim&r\n" +
                 " - &o/abandonclaim &r&7| abandon a claim&r\n"));

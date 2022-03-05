@@ -101,9 +101,13 @@ public final class HungerProtection extends JavaPlugin {
 
     private ArrayList<CommandBase> registerCommands() {
         ArrayList<CommandBase> commands = new ArrayList<>();
+        commands.add(new AbandonClaimCommand(this));
         commands.add(new AccessTrustCommand(this));
+        commands.add(new BuyClaimBlocksCommand(this));
         commands.add(new ClaimCommand(this));
+        commands.add(new ClaimExplosionsCommand(this));
         commands.add(new ClaimsCommand(this));
+        commands.add(new ClaimToolsCommand(this));
         commands.add(new ClaimTopCommand(this));
         commands.add(new ContainerTrustCommand(this));
         commands.add(new TransferClaimCommand(this));

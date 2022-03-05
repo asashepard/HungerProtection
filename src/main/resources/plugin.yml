@@ -19,6 +19,8 @@ commands:
     description: Toggle explosions within a claim or subdivision
   claims:
     description: List all of your claims
+  claimtools:
+    description: Get tools to manage claims
   claimtop:
     description: Get a leaderboard of the top claimers on the server
   containertrust:

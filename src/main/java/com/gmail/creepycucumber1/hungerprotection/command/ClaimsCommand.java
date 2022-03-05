@@ -1,7 +1,10 @@
 package com.gmail.creepycucumber1.hungerprotection.command;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
+import com.gmail.creepycucumber1.hungerprotection.items.ClaimsGUI;
+import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class ClaimsCommand extends CommandBase {
     public ClaimsCommand(HungerProtection plugin) {
@@ -11,8 +14,12 @@ public class ClaimsCommand extends CommandBase {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
 
-        //logic
+        if(!(sender instanceof Player player)) {
+            sender.sendMessage(TextUtil.convertColor("&cYou must be a player to use this command!"));
+            return true;
+        }
 
-        return false;
+        plugin.getGuiManager().openGUI(player, new ClaimsGUI(plugin, player));
+        return true;
     }
 }

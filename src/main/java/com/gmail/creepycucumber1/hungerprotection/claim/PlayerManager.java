@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public class PlayerManager {
         map.put("activeCID", "none"); //for resizing claims
         map.put("x1", Integer.MAX_VALUE);
         map.put("z1", Integer.MAX_VALUE);
+        map.put("lastTools", Instant.now().toEpochMilli() - 300000);
 
         plugin.getDataManager().getConfig().createSection("players." + uuid, map);
         plugin.getDataManager().saveConfig();
@@ -87,6 +89,13 @@ public class PlayerManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void setLastToolsToNow(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        long time = Instant.now().toEpochMilli();
+        cfg.set("lastTools", time);
+        plugin.getDataManager().saveConfig();
+    }
+
     //getter
     public ArrayList<OfflinePlayer> getPlayers() {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players");
@@ -125,6 +134,11 @@ public class PlayerManager {
     public int getZ1(Player player) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
         return cfg.getInt("z1");
+    }
+
+    public long getLastTools(Player player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        return cfg.getLong("lastTools");
     }
 
 }

@@ -80,6 +80,15 @@ public class ClaimManager {
     }
 
     public void removeClaim(String claimID) {
+        boolean exists = false;
+        for(String cid : plugin.getDataManager().getConfig().getConfigurationSection("claims").getKeys(false)) {
+            if (cid.equalsIgnoreCase(claimID)) {
+                exists = true;
+                break;
+            }
+        }
+        if(!exists) return;
+
         plugin.getDataManager().getConfig().set("claims." + claimID, null);
         plugin.getDataManager().saveConfig();
     }
@@ -189,6 +198,12 @@ public class ClaimManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void setOwner(OfflinePlayer player, String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        cfg.set("owner", player.getUniqueId().toString());
+        plugin.getDataManager().saveConfig();
+    }
+
     //getter
     public String getClaim(Location location) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims");
@@ -263,6 +278,10 @@ public class ClaimManager {
 
         if(claimID.equalsIgnoreCase("none")) return true; //no claim at location
         if(p.isOp()) return true; //player is operator
+        for(Subdivision subdivision : getSubdivisions(claimID)) {
+            if(subdivision.getBoundingBox().contains(loc.toVector()) &&
+                    subdivision.getIsPrivate() && !getOwner(claimID).equals(p)) return false; //in private subdivision, not owner
+        }
 
         int level = Integer.MAX_VALUE;
 
