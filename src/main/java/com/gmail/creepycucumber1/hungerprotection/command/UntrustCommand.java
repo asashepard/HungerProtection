@@ -3,6 +3,7 @@ package com.gmail.creepycucumber1.hungerprotection.command;
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.claim.PlayerManager;
 import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
+import com.gmail.creepycucumber1.hungerprotection.items.PlayersGUI;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -45,6 +46,7 @@ public class UntrustCommand extends CommandBase {
                 player.sendMessage(TextUtil.convertColor("&6All subdivisions that overlap the current location are now set to private."));
                 return true;
             }
+            plugin.getGuiManager().openGUI(player, new PlayersGUI(plugin, player, claimID, "untrust"));
             player.sendMessage(TextUtil.convertColor("&cPlease specify a player to manage permissions or stand inside a subdivision to make it private."));
             return true;
         }

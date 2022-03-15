@@ -32,7 +32,7 @@ public class AbandonClaimCommand extends CommandBase {
             return true;
         }
         if(!plugin.cm().getOwner(claimID).equals(player)) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim that you own to abandon it."));
+            player.sendMessage(TextUtil.convertColor("&cStand within a claim you own to abandon it."));
             return true;
         }
 

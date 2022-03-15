@@ -15,15 +15,15 @@ import java.util.UUID;
 public class PlayersGUI extends GUI {
     private Player player;
 
-    public PlayersGUI(HungerProtection plugin, Player player, String claimID) {
-        super(plugin, player.getUniqueId(), "&lTransfer claim " + claimID.split("-")[0] + "...", Bukkit.getOnlinePlayers().size() / 9 + 1);
+    public PlayersGUI(HungerProtection plugin, Player player, String claimID, String command) {
+        super(plugin, player.getUniqueId(), "&l/" + command + " in " + claimID.split("-")[0] + "...", Bukkit.getOnlinePlayers().size() / 9 + 1);
         this.player = player;
 
         int index = 1;
         for(Player p : Bukkit.getOnlinePlayers()) {
             if(p.equals(player)) continue;
             ItemStack skull = getSkull(p.getUniqueId().toString());
-            GUIItem skullItem = new GUIItem(skull, claimID + " " + p.getName());
+            GUIItem skullItem = new GUIItem(skull, command + " " + (command.equalsIgnoreCase("transferclaim") ? claimID + " " : "") + p.getName());
             items[index++] = skullItem;
         }
 
@@ -31,8 +31,8 @@ public class PlayersGUI extends GUI {
         ItemMeta infoMeta = info.getItemMeta();
         infoMeta.setDisplayName(TextUtil.convertColor("&fOnline players are listed"));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(TextUtil.convertColor("&7Click on a player head to transfer ownership of the claim to that player."));
-        lore.add(TextUtil.convertColor("&7Alternatively, use &o/transferclaim [player name]&r&7 as a command."));
+        lore.add(TextUtil.convertColor("&7Click on a player head to &o/" + command + " &r&7toward that player."));
+        lore.add(TextUtil.convertColor("&7Alternatively, use &o/" + command + " [player name]&r&7 as a command."));
         infoMeta.setLore(lore);
         info.setItemMeta(infoMeta);
         GUIItem infoItem = new GUIItem(info, "info");
@@ -58,9 +58,8 @@ public class PlayersGUI extends GUI {
     public void clicked(Player p, GUIItem item) {
         if(item.getItem().getType().equals(Material.PLAYER_HEAD)) {
             p.closeInventory();
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "transferclaim " + item.getItemId());
-            player.sendMessage(TextUtil.convertColor("&aSuccessfully transferred this claim to " +
-                    item.getItemId().split(" ")[1] + "."));
+            Bukkit.getServer().dispatchCommand(p, item.getItemId());
+            player.sendMessage(TextUtil.convertColor("&aSuccessfully completed the command &o" + item.getItemId() + "&r&a."));
         }
     }
 }

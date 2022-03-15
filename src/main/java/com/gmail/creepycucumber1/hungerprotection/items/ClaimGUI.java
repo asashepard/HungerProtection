@@ -63,7 +63,7 @@ public class ClaimGUI extends GUI {
         }
         else if(item.getItem().getType().equals(Material.PLAYER_HEAD)) {
             p.closeInventory();
-            plugin.getGuiManager().openGUI(p, new PlayersGUI(plugin, p, item.getItemId()));
+            plugin.getGuiManager().openGUI(p, new PlayersGUI(plugin, p, item.getItemId(), "transferclaim"));
         }
     }
 }

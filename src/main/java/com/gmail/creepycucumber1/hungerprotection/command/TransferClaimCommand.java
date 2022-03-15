@@ -2,6 +2,8 @@ package com.gmail.creepycucumber1.hungerprotection.command;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.claim.PlayerManager;
+import com.gmail.creepycucumber1.hungerprotection.items.ClaimsGUI;
+import com.gmail.creepycucumber1.hungerprotection.items.PlayersGUI;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -17,12 +19,6 @@ public class TransferClaimCommand extends CommandBase {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-
-        if(args.length == 3 && sender.isOp()) {
-            String claimID = args[1];
-            OfflinePlayer toTransfer = Bukkit.getOfflinePlayer(args[2]);
-            plugin.cm().setOwner(toTransfer, claimID);
-        }
 
         if(!(sender instanceof Player player)) {
             sender.sendMessage(TextUtil.convertColor("&cYou must be a player to use this command!"));
@@ -40,16 +36,29 @@ public class TransferClaimCommand extends CommandBase {
             return true;
         }
         if(args.length == 0) {
-            player.sendMessage(TextUtil.convertColor("&cPlease specify a player to transfer the claim to."));
+            plugin.getGuiManager().openGUI(player, new PlayersGUI(plugin, player, claimID, "transferclaim"));
             return true;
         }
 
-
         PlayerManager pm = plugin.getPlayerManager();
+
+        if(args.length == 2) {
+            claimID = args[0];
+            if(!plugin.cm().getClaims(player).contains(claimID)) return true;
+            ArrayList<String> names = new ArrayList<>();
+            for(OfflinePlayer p : pm.getPlayers()) names.add(p.getName());
+            if(!names.contains(args[0])) {
+                player.sendMessage(TextUtil.convertColor("&cPlayer " + args[1] + " hasn't logged on before."));
+                return true;
+            }
+            OfflinePlayer toTransfer = Bukkit.getOfflinePlayer(args[1]);
+            plugin.cm().setOwner(toTransfer, claimID);
+        }
+
         ArrayList<String> names = new ArrayList<>();
         for(OfflinePlayer p : pm.getPlayers()) names.add(p.getName());
         if(!names.contains(args[0])) {
-            player.sendMessage(TextUtil.convertColor("&cThat player hasn't logged on before."));
+            player.sendMessage(TextUtil.convertColor("&cPlayer " + args[0] + " hasn't logged on before."));
             return true;
         }
         OfflinePlayer toTransfer = Bukkit.getOfflinePlayer(args[0]);
