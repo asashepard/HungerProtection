@@ -13,7 +13,7 @@ public class ClaimBlocksGUI extends GUI {
     private Player player;
 
     public ClaimBlocksGUI(HungerProtection plugin, Player player) {
-        super(plugin, player.getUniqueId(), "Buy Claim Blocks", 1);
+        super(plugin, player.getUniqueId(), "&lBuy Claim Blocks", 1);
         this.player = player;
 
         ItemStack info = new ItemStack(Material.PAPER);

@@ -18,6 +18,12 @@ public class TransferClaimCommand extends CommandBase {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
 
+        if(args.length == 3 && sender.isOp()) {
+            String claimID = args[1];
+            OfflinePlayer toTransfer = Bukkit.getOfflinePlayer(args[2]);
+            plugin.cm().setOwner(toTransfer, claimID);
+        }
+
         if(!(sender instanceof Player player)) {
             sender.sendMessage(TextUtil.convertColor("&cYou must be a player to use this command!"));
             return true;
@@ -37,6 +43,7 @@ public class TransferClaimCommand extends CommandBase {
             player.sendMessage(TextUtil.convertColor("&cPlease specify a player to transfer the claim to."));
             return true;
         }
+
 
         PlayerManager pm = plugin.getPlayerManager();
         ArrayList<String> names = new ArrayList<>();

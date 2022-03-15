@@ -2,6 +2,7 @@ package com.gmail.creepycucumber1.hungerprotection.command;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.claim.PlayerManager;
+import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -33,6 +34,17 @@ public class TrustCommand extends CommandBase {
             return true;
         }
         if(args.length == 0) {
+            boolean unPrivatized = false;
+            for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
+                if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {
+                    subdivision.setPrivate(false);
+                    unPrivatized = true;
+                }
+            }
+            if(unPrivatized) {
+                player.sendMessage(TextUtil.convertColor("&6All subdivisions that overlap the current location are now no longer set to private."));
+                return true;
+            }
             player.sendMessage(TextUtil.convertColor("&cPlease specify a player to manage permissions."));
             return true;
         }

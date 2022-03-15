@@ -2,8 +2,10 @@ com\gmail\creepycucumber1\hungerprotection\items\GUIManager.class
 com\gmail\creepycucumber1\hungerprotection\runnable\GeneralMonitor$1.class
 com\gmail\creepycucumber1\hungerprotection\items\GUI.class
 com\gmail\creepycucumber1\hungerprotection\claim\ClaimManager.class
+com\gmail\creepycucumber1\hungerprotection\items\PlayersGUI.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimExplosionsCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimToolsCommand.class
+com\gmail\creepycucumber1\hungerprotection\items\ClaimGUI.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimCommand.class
 com\gmail\creepycucumber1\hungerprotection\claim\Subdivision.class
 com\gmail\creepycucumber1\hungerprotection\items\ClaimInspectionTool.class

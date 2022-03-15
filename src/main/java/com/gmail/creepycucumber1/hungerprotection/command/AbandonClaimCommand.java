@@ -1,6 +1,7 @@
 package com.gmail.creepycucumber1.hungerprotection.command;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
+import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,6 +36,14 @@ public class AbandonClaimCommand extends CommandBase {
             return true;
         }
 
+        for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
+            if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {
+                plugin.cm().removeSubdivision(subdivision, claimID);
+                player.sendMessage(TextUtil.convertColor("&6Subdivision successfully removed."));
+                return true;
+            }
+        }
+
         BoundingBox box = plugin.cm().getBoundingBox(claimID);
         int size = (int) Math.abs(box.getMaxX() - box.getMinX()) * (int) Math.abs(box.getMaxZ() - box.getMinZ());
         plugin.getPlayerManager().addClaimBlocks(player, size);
@@ -42,6 +51,6 @@ public class AbandonClaimCommand extends CommandBase {
         player.sendMessage(TextUtil.convertColor("&6Claim successfully removed. You now have " +
                 plugin.getPlayerManager().getClaimBlocks(player) + " claim blocks remaining."));
 
-        return false;
+        return true;
     }
 }

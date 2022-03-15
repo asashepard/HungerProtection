@@ -29,8 +29,8 @@ public class PlayerManager {
         map.put("accruedBlocks", 0);
         map.put("isClaiming", false);
         map.put("activeCID", "none"); //for resizing claims
-        map.put("x1", Integer.MAX_VALUE);
-        map.put("z1", Integer.MAX_VALUE);
+        map.put("x1", player.getLocation().getBlockX());
+        map.put("z1", player.getLocation().getBlockZ());
         map.put("lastTools", Instant.now().toEpochMilli() - 300000);
 
         plugin.getDataManager().getConfig().createSection("players." + uuid, map);
@@ -84,8 +84,8 @@ public class PlayerManager {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
         cfg.set("isClaiming", false);
         cfg.set("activeCID", "none");
-        cfg.set("x1", Integer.MAX_VALUE);
-        cfg.set("z1", Integer.MAX_VALUE);
+        cfg.set("x1", player.getLocation().getBlockX());
+        cfg.set("z1", player.getLocation().getBlockZ());
         plugin.getDataManager().saveConfig();
     }
 

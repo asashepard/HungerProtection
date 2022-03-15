@@ -7,6 +7,8 @@ description: HungerProtection Core
 depend: [Vault]
 softdepend: [Essentials]
 commands:
+  abandonclaim:
+    description: Abandon a claim
   accesstrust:
     description: Trust another player to use buttons etc. in your claim(s)
     aliases:

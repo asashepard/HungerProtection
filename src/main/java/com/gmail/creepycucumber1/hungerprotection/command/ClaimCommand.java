@@ -17,17 +17,14 @@ public class ClaimCommand extends CommandBase {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
 
-        Bukkit.getLogger().info("command received"); //todo
         if(!(sender instanceof Player player)) {
             sender.sendMessage(TextUtil.convertColor("&cYou must be a player to use this command!"));
             return true;
         }
 
         if(args.length == 0) {
-            Bukkit.getLogger().info("no args"); //todo
             String claimID = plugin.cm().getClaim(player.getLocation());
             if(claimID.equalsIgnoreCase("none")) {
-                Bukkit.getLogger().info("none"); //todo
                 Block b = player.getLocation().getBlock();
                 int x1 = b.getX() - 2;
                 int z1 = b.getZ() - 2;
@@ -40,6 +37,7 @@ public class ClaimCommand extends CommandBase {
             }
             PacketManager.highlightClaim(player, claimID, false);
             player.sendMessage(plugin.cm().toString(player, claimID));
+            return true;
         }
 
         player.sendMessage(TextUtil.convertColor("&3&lClaim Commands: &r\n" +
@@ -53,7 +51,7 @@ public class ClaimCommand extends CommandBase {
                 " - &o/trust [player] &r&7| trust&r\n" +
                 " - &o/untrust [player] &r&7| untrust&r\n" +
                 " - &o/transferclaim [player] &r&7| transfer claim&r\n" +
-                " - &o/abandonclaim &r&7| abandon a claim&r\n"));
+                " - &o/abandonclaim &r&7| abandon a claim&r"));
 
         return true;
     }

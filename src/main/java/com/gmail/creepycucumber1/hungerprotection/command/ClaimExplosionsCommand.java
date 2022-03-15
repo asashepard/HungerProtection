@@ -38,13 +38,13 @@ public class ClaimExplosionsCommand extends CommandBase {
             if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {
                 subdivision.setExplosions(!subdivision.getIsExplosions());
                 player.sendMessage(TextUtil.convertColor("&6Successfully toggled explosions in this subdivision! Explosions are now " +
-                        (!subdivision.getIsExplosions() ? "enabled." : "disabled.")));
+                        (subdivision.getIsExplosions() ? "enabled." : "disabled.")));
                 return true;
             }
         }
         plugin.cm().setExplosions(claimID, !plugin.cm().getExplosions(claimID));
         player.sendMessage(TextUtil.convertColor("&6Successfully toggled explosions in this claim! Explosions are now " +
-                (!plugin.cm().getExplosions(claimID) ? "enabled." : "disabled.")));
+                (plugin.cm().getExplosions(claimID) ? "enabled." : "disabled.")));
         return true;
 
     }

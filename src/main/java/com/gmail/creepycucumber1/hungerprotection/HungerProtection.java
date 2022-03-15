@@ -2,6 +2,7 @@ package com.gmail.creepycucumber1.hungerprotection;
 
 import com.gmail.creepycucumber1.hungerprotection.claim.ClaimManager;
 import com.gmail.creepycucumber1.hungerprotection.claim.PlayerManager;
+import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
 import com.gmail.creepycucumber1.hungerprotection.command.*;
 import com.gmail.creepycucumber1.hungerprotection.data.DataManager;
 import com.gmail.creepycucumber1.hungerprotection.event.EventManager;
@@ -16,6 +17,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +25,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 
 public final class HungerProtection extends JavaPlugin {
+
+    static {
+        ConfigurationSerialization.registerClass(Subdivision.class, "Subdivision");
+    }
 
     private IEssentials ess;
     private Economy vault;

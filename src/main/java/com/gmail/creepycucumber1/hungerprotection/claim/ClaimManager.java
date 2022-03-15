@@ -25,25 +25,26 @@ public class ClaimManager {
 
     public boolean createNewClaim(int x1, int z1, int x2, int z2, boolean isAdmin, String worldName, Player owner) {
         //--perform checks--
-        Bukkit.getLogger().info("creating new claim"); //todo
 
         //overlaps another claim
         World world = Bukkit.getWorld(worldName);
-        BoundingBox box = new BoundingBox(x1, z1, world.getMinHeight(), x2, z2, world.getMaxHeight());
+        BoundingBox box = new BoundingBox(x1, world.getMinHeight(), z1, x2, world.getMaxHeight(), z2);
+        box.expand(0, 0, 0, 1, 0, 1);
         if(overlaps(box, world, owner, "")) return false;
 
-        Bukkit.getLogger().info("1"); //todo
+        //too small
+        if(box.getWidthX() < 4 || box.getWidthZ() < 4) {
+            owner.sendMessage(TextUtil.convertColor("&cA claim must be at least 5 blocks wide in each direction."));
+            return false;
+        }
 
         //price management
         int size = Math.abs(x2 - x1) * Math.abs(z2 - z1);
         if(!isAdmin && plugin.getPlayerManager().getClaimBlocks(owner) < size) {
-            Bukkit.getLogger().info("no block"); //todo
             owner.sendMessage(TextUtil.convertColor("&cYou need " + (size - plugin.getPlayerManager().getClaimBlocks(owner)) + " more claim blocks to claim this area."));
             TextUtil.sendClickableCommand(owner, TextUtil.convertColor("&6&nBuy claim blocks"), "/buyclaimblocks", "Open the claim blocks menu");
             return false;
         }
-
-        Bukkit.getLogger().info("2"); //todo
 
         //--create claim--
 
@@ -52,7 +53,7 @@ public class ClaimManager {
         Bukkit.getLogger().info("New claim created: " + claimID);
         //created
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         String created = dateFormat.format(date);
         //buildTrusted, containerTrusted, accessTrusted
         ArrayList<String> buildTrusted = new ArrayList<>();
@@ -76,7 +77,6 @@ public class ClaimManager {
         if(!isAdmin) plugin.getPlayerManager().removeClaimBlocks(owner, size);
         plugin.getDataManager().getConfig().createSection("claims." + claimID, map);
         plugin.getDataManager().saveConfig();
-        Bukkit.getLogger().info("config saved after claim creation"); //todo
 
         owner.sendMessage(TextUtil.convertColor("&6You have successfully made a claim!"));
         if(!isAdmin) owner.sendMessage(TextUtil.convertColor("You have " + plugin.getPlayerManager().getClaimBlocks(owner) + " claim blocks remaining."));
@@ -107,11 +107,11 @@ public class ClaimManager {
             if(box.overlaps((BoundingBox) cfg.get(key + ".boundingBox"))) {
                 BoundingBox otherBox = (BoundingBox) cfg.get(key + ".boundingBox");
                 int x1 = (int) otherBox.getMinX();
-                int y1 = (int) otherBox.getMinY();
+                int z1 = (int) otherBox.getMinZ();
                 int x2 = (int) otherBox.getMaxX();
-                int y2 = (int) otherBox.getMaxY();
+                int z2 = (int) otherBox.getMaxZ();
                 player.sendMessage(TextUtil.convertColor("&cThis selection overlaps an existing claim at " +
-                        "(" + x1 + ", " + y1 + ") -> (" + x2 + ", " + y2 + ")."));
+                        "(" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")."));
                 PacketManager.highlightClaim(player, key, true);
                 return true;
             }
@@ -134,28 +134,30 @@ public class ClaimManager {
         World world = getWorld(claimID);
         BoundingBox box = (BoundingBox) cfg.get("boundingBox");
 
-        int fX1 = 0;
-        int fZ1 = 0;
+        int fX1;
+        int fZ1;
 
         int xMax = (int) box.getMaxX();
         int zMax = (int) box.getMaxZ();
         int xMin = (int) box.getMinX();
         int zMin = (int) box.getMinZ();
         //set fX1 and fX2 to the corner opposite the one being resized
-        if(xMax == x1) {
+        if(Math.abs(xMax - x1) < Math.abs(xMin - x1))
             fX1 = xMin;
-            if(zMax == z1)
-                fZ1 = zMin;
-            else
-                fZ1 = zMax;
-        }
         else
             fX1 = xMax;
+        if(Math.abs(zMax - z1) < Math.abs(zMin - z1))
+            fZ1 = zMin;
+        else
+            fZ1 = zMax;
 
-        BoundingBox newBox = new BoundingBox(fX1, fZ1, world.getMinHeight(), x2, z2, world.getMaxHeight());
+        BoundingBox newBox = new BoundingBox(fX1, world.getMinHeight(), fZ1, x2, world.getMaxHeight(), z2);
 
         if(!overlaps(newBox, world, player, claimID) && containsAllSubdivisions(newBox, (ArrayList<Subdivision>) cfg.getList("subdivisions")))
-            cfg.set("boundingBox", newBox);
+            if(newBox.getWidthX() >= 4 && newBox.getWidthZ() >= 4)
+                cfg.set("boundingBox", newBox);
+            else
+                player.sendMessage(TextUtil.convertColor("&cClaims must remain at least 5 blocks wide in either direction."));
 
         plugin.getDataManager().saveConfig();
     }
@@ -210,6 +212,22 @@ public class ClaimManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void addSubdivision(Subdivision subdivision, String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        ArrayList<Subdivision> subdivisions = new ArrayList<>((ArrayList<Subdivision>) cfg.get("subdivisions"));
+        subdivisions.add(subdivision);
+        cfg.set("subdivisions", subdivisions);
+        plugin.getDataManager().saveConfig();
+    }
+
+    public void removeSubdivision(Subdivision subdivision, String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        ArrayList<Subdivision> subdivisions = new ArrayList<>((ArrayList<Subdivision>) cfg.get("subdivisions"));
+        subdivisions.remove(subdivision);
+        cfg.set("subdivisions", subdivisions);
+        plugin.getDataManager().saveConfig();
+    }
+
     //getter
     public String getClaim(Location location) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims");
@@ -233,6 +251,7 @@ public class ClaimManager {
     }
 
     public boolean getIsAdmin(String claimID) {
+        if(claimID.equalsIgnoreCase("none")) return false;
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         return cfg.getBoolean("isAdmin");
     }
@@ -240,6 +259,12 @@ public class ClaimManager {
     public BoundingBox getBoundingBox(String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         return (BoundingBox) cfg.get("boundingBox");
+    }
+
+    public BoundingBox getVisualBox(String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        BoundingBox box = (BoundingBox) cfg.get("boundingBox");
+        return new BoundingBox(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX() - 1, box.getMaxY(), box.getMaxZ() - 1);
     }
 
     public OfflinePlayer getOwner(String claimID) {
@@ -279,28 +304,9 @@ public class ClaimManager {
         return access;
     }
 
-    public boolean getHasPermission(OfflinePlayer p, Location loc, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
-        String claimID = getClaim(loc);
-
-        if(claimID.equalsIgnoreCase("none")) return true; //no claim at location
-        if(p.isOp()) return true; //player is operator
-        for(Subdivision subdivision : getSubdivisions(claimID)) {
-            if(subdivision.getBoundingBox().contains(loc.toVector()) &&
-                    subdivision.getIsPrivate() && !getOwner(claimID).equals(p)) return false; //in private subdivision, not owner
-        }
-
-        int level = Integer.MAX_VALUE;
-
-        if(getOwner(claimID).equals(p)) level = 1; //is claim owner
-        else if(getBuilders(claimID).contains(p)) level = 2; //has build permission
-        else if(getContainer(claimID).contains(p)) level = 3; //has container permission
-        else if(getAccess(claimID).contains(p)) level = 4; //has access permission
-
-        return level <= requiredLevel;
-    }
-
     public boolean getHasPermission(OfflinePlayer p, String claimID, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
         if(p.isOp()) return true; //player is operator
+        if(claimID.equalsIgnoreCase("none")) return true; //no claim in the location
 
         int level = Integer.MAX_VALUE;
 
@@ -318,8 +324,21 @@ public class ClaimManager {
     }
 
     public boolean getExplosions(String claimID) {
+        if(claimID.equalsIgnoreCase("none")) return true; //no claim in the location
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         return cfg.getBoolean("explosions");
+    }
+
+    public boolean getExplosions(Location loc) {
+        String claimID = getClaim(loc);
+        if(claimID.equalsIgnoreCase("none")) return true;
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        boolean explosions = getExplosions(claimID);
+        for(Subdivision subdivision : (ArrayList<Subdivision>) cfg.getList("subdivisions")) {
+            if(subdivision.getBoundingBox().contains(loc.toVector()))
+                explosions = subdivision.getIsExplosions();
+        }
+        return explosions;
     }
 
     public ArrayList<Subdivision> getSubdivisions(String claimID) {
@@ -329,23 +348,16 @@ public class ClaimManager {
         return list;
     }
 
-    public boolean getHasPermission(Player p, Location loc, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
+    public boolean isPrivatized(Location loc) {
         String claimID = getClaim(loc);
-
-        if(claimID.equalsIgnoreCase("none")) return true; //no claim at location
-        if(p.isOp()) return true; //player is operator
-
-        int level = Integer.MAX_VALUE;
-
-        if(getOwner(claimID).equals(p)) level = 1; //is claim owner
-        else if(getBuilders(claimID).contains(p)) level = 2; //has build permission
-        else if(getContainer(claimID).contains(p)) level = 3; //has container permission
-        else if(getAccess(claimID).contains(p)) level = 4; //has access permission
-
-        if(level > requiredLevel)
-            p.sendMessage(TextUtil.convertColor("&cThat block is claimed by " +
-                    (getIsAdmin(claimID) ? "an administrator" : getOwner(claimID).getName())));
-        return level <= requiredLevel;
+        if(claimID.equalsIgnoreCase("none")) return false;
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        boolean prvt = false;
+        for(Subdivision subdivision : (ArrayList<Subdivision>) cfg.getList("subdivisions")) {
+            if(subdivision.getBoundingBox().contains(loc.toVector()) && subdivision.getIsPrivate())
+                prvt = true;
+        }
+        return prvt;
     }
 
     //print
@@ -355,10 +367,10 @@ public class ClaimManager {
         boolean owner = getOwner(claimID).equals(player);
         BoundingBox box = (BoundingBox) cfg.get("boundingBox");
         int x1 = (int) box.getMaxX();
-        int z1 = (int) box.getMaxY();
+        int z1 = (int) box.getMaxZ();
         int x2 = (int) box.getMinX();
-        int z2 = (int) box.getMinY();
-        int size = (x1 - z1) * (x2 - z2);
+        int z2 = (int) box.getMinZ();
+        int size = (int) box.getWidthX() * (int) box.getWidthZ();
 
         result.append(TextUtil.convertColor("&6Claim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
         result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m &f| &7Created: " + getCreated(claimID)));

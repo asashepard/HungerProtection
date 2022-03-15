@@ -2,22 +2,23 @@ package com.gmail.creepycucumber1.hungerprotection.items;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.UUID;
 
 public class ClaimsGUI extends GUI {
     private Player player;
 
     public ClaimsGUI(HungerProtection plugin, Player player) {
-        super(plugin, player.getUniqueId(), "Claims Dashboard", (plugin.cm().getClaims(player).size() + 1) / 9 + 1);
+        super(plugin, player.getUniqueId(), "&lClaims Dashboard", (plugin.cm().getClaims(player).size() + 1) / 9 + 1);
         this.player = player;
 
         int totalSize = 0;
@@ -32,6 +33,7 @@ public class ClaimsGUI extends GUI {
             ItemMeta claimMeta = claim.getItemMeta();
             claimMeta.setDisplayName(TextUtil.convertColor("&6" + claimID));
             ArrayList<String> lore = new ArrayList<>(Arrays.asList(plugin.cm().toString(player, claimID).split("\n")));
+            lore.remove(1);
             claimMeta.setLore(lore);
             claim.setItemMeta(claimMeta);
 
@@ -39,7 +41,7 @@ public class ClaimsGUI extends GUI {
             items[index++] = claimItem;
 
             BoundingBox box = plugin.cm().getBoundingBox(claimID);
-            totalSize += (int) Math.abs(box.getMaxX() - box.getMinX()) * (int) Math.abs(box.getMaxZ() - box.getMinZ());
+            totalSize += (int) box.getWidthX() * (int) box.getWidthZ();
 
         }
 
@@ -50,6 +52,8 @@ public class ClaimsGUI extends GUI {
         lore.add(TextUtil.convertColor("&7Total area claimed: &6" + totalSize + " blocks"));
         infoMeta.setLore(lore);
         info.setItemMeta(infoMeta);
+        GUIItem infoItem = new GUIItem(info, "info");
+        items[0] = infoItem;
 
     }
 
@@ -60,6 +64,10 @@ public class ClaimsGUI extends GUI {
 
     @Override
     public void clicked(Player p, GUIItem item) {
-        //todo present option to abandon?
+        if(item.getItem().getType().equals(Material.GRASS_BLOCK) || item.getItem().getType().equals(Material.NETHERRACK)
+                || item.getItem().getType().equals(Material.END_STONE)) {
+            p.closeInventory();
+            plugin.getGuiManager().openGUI(p, new ClaimGUI(plugin, p, item.getItemId()));
+        }
     }
 }
