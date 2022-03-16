@@ -80,18 +80,7 @@ public class PacketManager implements Listener {
     }
 
     private boolean onPacket(Player player, Packet<? extends PacketListener> packet) { //reaction to packets
-        //block breaking (level = 2)
-        /*if(packet instanceof ServerboundPlayerActionPacket pkt) {
-            if(pkt.getAction().equals(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK)) {
-                Block b = player.getTargetBlock(10);
-                return plugin.cm().getHasPermission(player, b.getLocation(), 2);
-            }
-        }
-        else if(packet instanceof ClientboundBlockBreakAckPacket pkt) {
-            Block b = player.getTargetBlock(10);
-            return plugin.cm().getHasPermission(player, b.getLocation(), 2);
-        }
-        //todo add more later (entities, containers, buttons, etc.)*/
+        //potential space for packet handling
         return true;
     }
 
@@ -205,7 +194,7 @@ public class PacketManager implements Listener {
                     ((CraftPlayer) player).sendBlockChange(loc, material, (byte) 0);
                 }
             }
-        }, 400); //20 seconds
+        }, 300); //15 seconds
     }
 
     public static void highlightBlock(Player player, Location location, Material material) {
