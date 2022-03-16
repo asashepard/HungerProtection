@@ -14,6 +14,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
@@ -212,8 +213,8 @@ public class EventManager implements Listener {
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getPlayer().getLocation()),
                     4)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(4));
                 e.setCancelled(true);
-                e.getPlayer().sendMessage(TextUtil.convertColor("&cYou aren't access-trusted here."));
             }
         }
     }
@@ -225,20 +226,22 @@ public class EventManager implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
 
         if(plugin.cm().isPrivatized(e.getBlock().getLocation())) {
-            e.setCancelled(!plugin.cm().getHasPermission(
+            if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getBlock().getLocation()),
-                    1)
-            );
-            return;
+                    1)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                e.setCancelled(true);
+                return;
+            }
         }
 
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getBlock().getLocation()),
                 2)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
             e.setCancelled(true);
-            e.getPlayer().sendMessage(TextUtil.convertColor("&cYou aren't build-trusted here."));
         }
     }
 
@@ -247,20 +250,22 @@ public class EventManager implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
 
         if(plugin.cm().isPrivatized(e.getBlock().getLocation())) {
-            e.setCancelled(!plugin.cm().getHasPermission(
+            if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getBlock().getLocation()),
-                    1)
-            );
-            return;
+                    1)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                e.setCancelled(true);
+                return;
+            }
         }
 
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getBlock().getLocation()),
                 2)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
             e.setCancelled(true);
-            e.getPlayer().sendMessage(TextUtil.convertColor("&cYou aren't build-trusted here."));
         }
     }
 
@@ -270,17 +275,19 @@ public class EventManager implements Listener {
         if(e.getClickedBlock() == null) return;
         if(e.getAction().isLeftClick()) return;
 
-        if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
-            e.setCancelled(!plugin.cm().getHasPermission(
-                    e.getPlayer(),
-                    plugin.cm().getClaim(e.getClickedBlock().getLocation()),
-                    1)
-            );
-            return;
-        }
-
         if(e.getClickedBlock().getType().toString().toLowerCase().contains("door") &&
                 !e.getClickedBlock().getType().toString().toLowerCase().contains("trap")) return;
+
+        if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
+            if(!plugin.cm().getHasPermission(
+                    e.getPlayer(),
+                    plugin.cm().getClaim(e.getClickedBlock().getLocation()),
+                    1)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                e.setCancelled(true);
+                return;
+            }
+        }
 
         List<Material> containers = List.of(Material.CHEST, Material.BARREL, Material.DROPPER,
                 Material.HOPPER, Material.FURNACE, Material.SMOKER, Material.BLAST_FURNACE, Material.BEEHIVE,
@@ -288,7 +295,7 @@ public class EventManager implements Listener {
         List<Material> structures = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
                 Material.CAMPFIRE, Material.SOUL_CAMPFIRE);
 
-        int level = 4;
+        int level = 4; //default
         if(containers.contains(e.getClickedBlock().getType())) level = 3;
         else if(structures.contains(e.getClickedBlock().getType()) ||
                 e.getClickedBlock().getType().toString().toLowerCase().contains("candle")) level = 2;
@@ -297,6 +304,7 @@ public class EventManager implements Listener {
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getClickedBlock().getLocation()),
                 level)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
             e.setCancelled(true);
         }
     }
@@ -309,18 +317,21 @@ public class EventManager implements Listener {
             level = 3;
 
         if(plugin.cm().isPrivatized(e.getRightClicked().getLocation())) {
-            e.setCancelled(!plugin.cm().getHasPermission(
+            if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getRightClicked().getLocation()),
-                    1)
-            );
-            return;
+                    1)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                e.setCancelled(true);
+                return;
+            }
         }
 
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getRightClicked().getLocation()),
                 level)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
             e.setCancelled(true);
         }
     }
@@ -331,18 +342,21 @@ public class EventManager implements Listener {
         if(e.getRightClicked() instanceof Hanging) {
 
             if(plugin.cm().isPrivatized(e.getRightClicked().getLocation())) {
-                e.setCancelled(!plugin.cm().getHasPermission(
+                if(!plugin.cm().getHasPermission(
                         e.getPlayer(),
                         plugin.cm().getClaim(e.getRightClicked().getLocation()),
-                        1)
-                );
-                return;
+                        1)) {
+                    TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                    e.setCancelled(true);
+                    return;
+                }
             }
 
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getRightClicked().getLocation()),
                     2)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
                 e.setCancelled(true);
             }
         }
@@ -353,16 +367,18 @@ public class EventManager implements Listener {
     public void onPlayerAttackEvent(EntityDamageByEntityEvent e) {
         if(!(e.getDamager() instanceof Player player)) return;
 
-        if(e.getEntity() instanceof AbstractHorse || e.getEntity() instanceof Cat ||
+        if(!(e.getEntity() instanceof AbstractHorse || e.getEntity() instanceof Cat ||
                 e.getEntity() instanceof Parrot || e.getEntity() instanceof ChestedHorse ||
                 e.getEntity() instanceof Hanging || e.getEntity() instanceof ArmorStand ||
-                e.getEntity() instanceof AbstractVillager || e.getEntity() instanceof EnderCrystal)
-            if(!plugin.cm().getHasPermission(
-                    player,
-                    plugin.cm().getClaim(e.getEntity().getLocation()),
-                    2)) {
-                e.setCancelled(true);
-            }
+                e.getEntity() instanceof AbstractVillager || e.getEntity() instanceof EnderCrystal)) return;
+
+        if(!plugin.cm().getHasPermission(
+                player,
+                plugin.cm().getClaim(e.getEntity().getLocation()),
+                2)) {
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -377,6 +393,7 @@ public class EventManager implements Listener {
     //entity damage in admin claim
     public void onEntityDamage(EntityDamageEvent e) {
         if(!plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getEntity().getLocation()))) return;
+        if(!(e.getEntity() instanceof Player)) return;
 
         e.setCancelled(true);
         Location loc = e.getEntity().getOrigin();
@@ -390,30 +407,32 @@ public class EventManager implements Listener {
         if(!(e.getEntity().getShooter() instanceof Player player)) return;
         if(e.getEntity() instanceof EnderPearl) return;
 
-        if(plugin.cm().isPrivatized(e.getCollidedWith().getLocation())) {
-            e.setCancelled(!plugin.cm().getHasPermission(
-                    player,
-                    plugin.cm().getClaim(e.getCollidedWith().getLocation()),
-                    1)
-            );
-            return;
-        }
-
-        if(e.getCollidedWith() instanceof AbstractHorse || e.getCollidedWith() instanceof Cat ||
+        if(!(e.getCollidedWith() instanceof AbstractHorse || e.getCollidedWith() instanceof Cat ||
                 e.getCollidedWith() instanceof Parrot || e.getCollidedWith() instanceof ChestedHorse ||
                 e.getCollidedWith() instanceof Hanging || e.getCollidedWith() instanceof ArmorStand ||
-                e.getCollidedWith() instanceof AbstractVillager || e.getCollidedWith() instanceof EnderCrystal) {
+                e.getCollidedWith() instanceof AbstractVillager || e.getCollidedWith() instanceof EnderCrystal)) return;
+
+        if(plugin.cm().isPrivatized(e.getCollidedWith().getLocation())) {
             if(!plugin.cm().getHasPermission(
                     player,
                     plugin.cm().getClaim(e.getCollidedWith().getLocation()),
-                    2)) {
+                    1)) {
+                TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(0));
                 e.setCancelled(true);
             }
-            else
-                return;
-            if((e.getCollidedWith() instanceof Hanging || e.getCollidedWith() instanceof EnderCrystal)
-                    && e.getCollidedWith().isVisualFire()) e.getCollidedWith().setVisualFire(false);
         }
+        else if(!plugin.cm().getHasPermission(
+                player,
+                plugin.cm().getClaim(e.getCollidedWith().getLocation()),
+                2)) {
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            e.setCancelled(true);
+        }
+        else
+            return;
+
+        if((e.getCollidedWith() instanceof Hanging || e.getCollidedWith() instanceof EnderCrystal)
+                && e.getCollidedWith().isVisualFire()) e.getCollidedWith().setVisualFire(false);
     }
 
     @EventHandler

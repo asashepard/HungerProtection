@@ -1,6 +1,7 @@
 package com.gmail.creepycucumber1.hungerprotection.util;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -10,6 +11,15 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class TextUtil {
+
+    public static final List<String> MESSAGES = List.of(
+            "&cYou don't have permissions in this subdivision",
+            "&cYou don't own this claim",
+            "&cYou don't have build permissions in this claim",
+            "&cYou don't have container permissions in this claim.",
+            "&cYou don't have access permissions in this claim."
+    );
+
     public static String convertColor(String s){
         return ChatColor.translateAlternateColorCodes('&', s);
     }
@@ -70,4 +80,10 @@ public class TextUtil {
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
         player.spigot().sendMessage(component);
     }
+
+    public static void sendActionBarMessage(Player p, String message) {
+        message = convertColor(message);
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+    }
+
 }
