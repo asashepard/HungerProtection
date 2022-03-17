@@ -49,7 +49,7 @@ public class ClaimTopCommand extends CommandBase {
         if(page == 0) page = 1;
         int index = (page - 1) * 10;
 
-        player.sendMessage(TextUtil.convertColor("&2&lLeaderboard&r&2: Area Claimed " +
+        player.sendMessage(TextUtil.convertColor("&2&lLeaderboard:&r&2 Area Claimed " +
                 "&7(page " + page + " of " + (((list.size() - 1) / 10) + 1) + ")\n"));
         for(int i = index; i < index + 10; i++) {
             if(i > list.size() - 1) return true;

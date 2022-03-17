@@ -308,7 +308,7 @@ public class ClaimManager {
         if(p.isOp()) return true; //player is operator
         if(claimID.equalsIgnoreCase("none")) return true; //no claim in the location
 
-        int level = Integer.MAX_VALUE;
+        int level = 5;
 
         if(getOwner(claimID).equals(p)) level = 1; //is claim owner
         else if(getBuilders(claimID).contains(p)) level = 2; //has build permission

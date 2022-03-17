@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.level.block.TrappedChestBlock;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
@@ -21,8 +22,11 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.util.BoundingBox;
@@ -267,28 +271,37 @@ public class EventManager implements Listener {
         if(e.getClickedBlock() == null) return;
         if(e.getAction().isLeftClick()) return;
 
+        //placing block, should be handled by that
+        if(e.getPlayer().getItemInUse() != null && e.getPlayer().getItemInUse().getType().isBlock() ||
+                !(e.getClickedBlock().getType().isInteractable() && !e.getPlayer().isSneaking())) return;
+
         if(e.getClickedBlock().getType().toString().toLowerCase().contains("door") &&
                 !e.getClickedBlock().getType().toString().toLowerCase().contains("trap")) return;
+
+        List<Material> universal = List.of(Material.CRAFTING_TABLE, Material.LOOM, Material.LODESTONE,
+                Material.CARTOGRAPHY_TABLE, Material.ENCHANTING_TABLE, Material.STONECUTTER,
+                Material.GRINDSTONE);
+        List<Material> containers = List.of(Material.CHEST, Material.BARREL, Material.DROPPER,
+                Material.HOPPER, Material.FURNACE, Material.SMOKER, Material.BLAST_FURNACE, Material.BEEHIVE,
+                Material.JUKEBOX, Material.LECTERN, Material.SHULKER_BOX, Material.DISPENSER, Material.BREWING_STAND);
+        List<Material> structures = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
+                Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
+                Material.RESPAWN_ANCHOR);
 
         if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getClickedBlock().getLocation()),
-                    1)) {
+                    1) && !universal.contains(e.getClickedBlock().getType())) {
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
                 e.setCancelled(true);
                 return;
             }
         }
 
-        List<Material> containers = List.of(Material.CHEST, Material.BARREL, Material.DROPPER,
-                Material.HOPPER, Material.FURNACE, Material.SMOKER, Material.BLAST_FURNACE, Material.BEEHIVE,
-                Material.JUKEBOX, Material.LECTERN, Material.SHULKER_BOX, Material.DISPENSER);
-        List<Material> structures = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
-                Material.CAMPFIRE, Material.SOUL_CAMPFIRE);
-
         int level = 4; //default
-        if(containers.contains(e.getClickedBlock().getType())) level = 3;
+        if(universal.contains(e.getClickedBlock().getType())) level = 5;
+        else if(containers.contains(e.getClickedBlock().getType())) level = 3;
         else if(structures.contains(e.getClickedBlock().getType()) ||
                 e.getClickedBlock().getType().toString().toLowerCase().contains("candle")) level = 2;
 
@@ -301,9 +314,26 @@ public class EventManager implements Listener {
         }
     }
 
+    /*@EventHandler
+    //left-click a vehicle
+    public void onVehicleDamage(VehicleDamageEvent e) {
+        if(e.getAttacker() == null || !(e.getAttacker() instanceof Player player)) return;
+        if(!plugin.cm().getHasPermission(
+                player,
+                plugin.cm().getClaim(e.getVehicle().getLocation()),
+                2)) {
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            e.setCancelled(true);
+        }
+    }*/
+
     @EventHandler
     //right-click an entity
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
+        //using an item while looking at the entity which will take priority
+        List<Material> usable = List.of(Material.BOW, Material.CROSSBOW, Material.GOLDEN_APPLE, Material.ENCHANTED_GOLDEN_APPLE);
+        if(e.getPlayer().getItemInUse() != null && usable.contains(e.getPlayer().getItemInUse().getType())) return;
+
         int level = 4;
         if(e.getRightClicked() instanceof ArmorStand)
             level = 3;
@@ -357,18 +387,34 @@ public class EventManager implements Listener {
     @EventHandler
     //left-click an entity
     public void onPlayerAttackEvent(EntityDamageByEntityEvent e) {
+        //protect armor stands and villagers from explosions
+        if(e.getEntity() instanceof ArmorStand || e.getEntity() instanceof AbstractVillager) {
+            if(e.getDamager() instanceof TNTPrimed && !plugin.cm().getExplosions(plugin.cm().getClaim(e.getEntity().getLocation()))) {
+                e.setCancelled(true);
+                return;
+            }
+        }
         if(!(e.getDamager() instanceof Player player)) return;
 
         if(!(e.getEntity() instanceof AbstractHorse || e.getEntity() instanceof Cat ||
                 e.getEntity() instanceof Parrot || e.getEntity() instanceof ChestedHorse ||
                 e.getEntity() instanceof Hanging || e.getEntity() instanceof ArmorStand ||
-                e.getEntity() instanceof AbstractVillager || e.getEntity() instanceof EnderCrystal)) return;
+                e.getEntity() instanceof AbstractVillager || e.getEntity() instanceof EnderCrystal ||
+                e.getEntity() instanceof Minecart || e.getEntity() instanceof Boat)) return;
 
         if(!plugin.cm().getHasPermission(
                 player,
                 plugin.cm().getClaim(e.getEntity().getLocation()),
                 2)) {
             TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    //explosion breaks hanging
+    public void onHangingBreak(HangingBreakEvent e) {
+        if(e.getCause().equals(HangingBreakEvent.RemoveCause.EXPLOSION) && !plugin.cm().getExplosions(e.getEntity().getLocation())) {
             e.setCancelled(true);
         }
     }
@@ -402,7 +448,8 @@ public class EventManager implements Listener {
         if(!(e.getCollidedWith() instanceof AbstractHorse || e.getCollidedWith() instanceof Cat ||
                 e.getCollidedWith() instanceof Parrot || e.getCollidedWith() instanceof ChestedHorse ||
                 e.getCollidedWith() instanceof Hanging || e.getCollidedWith() instanceof ArmorStand ||
-                e.getCollidedWith() instanceof AbstractVillager || e.getCollidedWith() instanceof EnderCrystal)) return;
+                e.getCollidedWith() instanceof AbstractVillager || e.getCollidedWith() instanceof EnderCrystal ||
+                e.getCollidedWith() instanceof Minecart || e.getCollidedWith() instanceof Boat)) return;
 
         if(plugin.cm().isPrivatized(e.getCollidedWith().getLocation())) {
             if(!plugin.cm().getHasPermission(
@@ -430,21 +477,25 @@ public class EventManager implements Listener {
     @EventHandler
     //liquid flows across claim border
     public void onLiquidFlow(BlockFromToEvent e) {
-        if(!e.getToBlock().getType().equals(Material.LAVA)) return;
+        if(!e.getBlock().getType().equals(Material.LAVA)) {
+            if(plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getToBlock().getLocation()))) {
+                if(!e.getBlock().getType().equals(Material.WATER)) return; //water flow protected in admin claims
+            }
+            else
+                return;
+        }
         Block b = e.getToBlock();
 
-        String direction = "none";
-        if(b.getRelative(1, 0, 0).getType().equals(b.getType()) || b.getRelative(-1, 0, 0).getType().equals(b.getType()))
-            direction = "x";
-        else if(b.getRelative(0, 0, 1).getType().equals(b.getType()) || b.getRelative(0, 0, -1).getType().equals(b.getType()))
-            direction = "z";
-        if(direction.equalsIgnoreCase("none")) return;
+        String claimID = plugin.cm().getClaim(b.getLocation());
+        if(claimID.equalsIgnoreCase("none")) return;
 
-        if(direction.equalsIgnoreCase("x") && !plugin.cm().getClaim(b.getRelative(1, 0, 0).getLocation())
-                .equalsIgnoreCase(plugin.cm().getClaim(b.getRelative(-1, 0, 0).getLocation())) ||
-                direction.equalsIgnoreCase("z") && !plugin.cm().getClaim(b.getRelative(0, 0, 1).getLocation())
-                        .equalsIgnoreCase(plugin.cm().getClaim(b.getRelative(0, 0, -1).getLocation())))
+        BoundingBox box = plugin.cm().getVisualBox(claimID);
+
+        if(b.getX() == box.getMinX() || b.getX() == box.getMaxX() ||
+                b.getZ() == box.getMinZ() || b.getZ() == box.getMaxZ()) {
             e.setCancelled(true);
+        }
+
     }
 
 }

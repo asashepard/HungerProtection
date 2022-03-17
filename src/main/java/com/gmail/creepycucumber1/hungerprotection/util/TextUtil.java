@@ -16,8 +16,8 @@ public class TextUtil {
             "&cYou don't have permissions in this subdivision",
             "&cYou don't own this claim",
             "&cYou don't have build permissions in this claim",
-            "&cYou don't have container permissions in this claim.",
-            "&cYou don't have access permissions in this claim."
+            "&cYou don't have container permissions in this claim",
+            "&cYou don't have access permissions in this claim"
     );
 
     public static String convertColor(String s){
