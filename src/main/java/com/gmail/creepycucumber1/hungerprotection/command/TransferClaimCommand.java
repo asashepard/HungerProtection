@@ -2,7 +2,6 @@ package com.gmail.creepycucumber1.hungerprotection.command;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.claim.PlayerManager;
-import com.gmail.creepycucumber1.hungerprotection.items.ClaimsGUI;
 import com.gmail.creepycucumber1.hungerprotection.items.PlayersGUI;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import org.bukkit.Bukkit;

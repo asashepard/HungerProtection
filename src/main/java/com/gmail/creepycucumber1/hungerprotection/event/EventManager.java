@@ -200,8 +200,7 @@ public class EventManager implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if(e.getMessage().toLowerCase().contains("sethome") || e.getMessage().toLowerCase().contains("setwarp") ||
-                e.getMessage().toLowerCase().contains("warp set")) {
+        if(e.getMessage().toLowerCase().contains("sethome") || e.getMessage().toLowerCase().contains("pwarp set")) {
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getPlayer().getLocation()),

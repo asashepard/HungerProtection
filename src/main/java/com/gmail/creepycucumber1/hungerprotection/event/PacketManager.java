@@ -46,7 +46,7 @@ public class PacketManager implements Listener {
             injectPlayer(p);
     }
 
-    private void removePlayer(Player player) {
+    public void removePlayer(Player player) {
         Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
         channel.eventLoop().submit(() -> {
             channel.pipeline().remove(player.getName());

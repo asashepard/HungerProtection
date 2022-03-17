@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -90,6 +91,9 @@ public final class HungerProtection extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            packetManager.removePlayer(player);
+        }
         getLogger().info("HungerProtection has been disabled.");
     }
 

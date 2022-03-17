@@ -239,7 +239,7 @@ public class ClaimManager {
         return "none";
     }
 
-    public ArrayList<String> getClaims(Player player) {
+    public ArrayList<String> getClaims(OfflinePlayer player) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims");
         ArrayList<String> claimIDs = new ArrayList<>();
         for(String key : cfg.getKeys(false)) {
@@ -372,7 +372,7 @@ public class ClaimManager {
         int z2 = (int) box.getMinZ();
         int size = (int) box.getWidthX() * (int) box.getWidthZ();
 
-        result.append(TextUtil.convertColor("&6Claim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
+        result.append(TextUtil.convertColor("&6&lClaim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
         result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m &f| &7Created: " + getCreated(claimID)));
 
         if(!owner) return result.toString();
