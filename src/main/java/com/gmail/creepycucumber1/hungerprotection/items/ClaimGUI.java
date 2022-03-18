@@ -24,7 +24,7 @@ public class ClaimGUI extends GUI {
 
         ItemStack claim = new ItemStack(material);
         ItemMeta claimMeta = claim.getItemMeta();
-        claimMeta.setDisplayName(TextUtil.convertColor("&6This Claim"));
+        claimMeta.setDisplayName(TextUtil.convertColor("&2This Claim"));
         ArrayList<String> lore = new ArrayList<>(Arrays.asList(plugin.cm().toString(player, claimID).split("\n")));
         lore.remove(1);
         claimMeta.setLore(lore);
@@ -58,8 +58,8 @@ public class ClaimGUI extends GUI {
         if(item.getItem().getType().equals(Material.RED_WOOL)) {
             p.closeInventory();
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "abandonclaim " + item.getItemId());
-            p.sendMessage(TextUtil.convertColor("&6Claim successfully removed. You now have " +
-                    plugin.getPlayerManager().getClaimBlocks(p) + " claim blocks remaining."));
+            p.sendMessage(TextUtil.convertColor("&aClaim successfully removed. You now have &f" +
+                    plugin.getPlayerManager().getClaimBlocks(p) + " &aclaim blocks remaining."));
         }
         else if(item.getItem().getType().equals(Material.PLAYER_HEAD)) {
             p.closeInventory();

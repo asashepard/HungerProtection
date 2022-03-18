@@ -44,7 +44,7 @@ public class PlayersGUI extends GUI {
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1);
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skullMeta.setOwningPlayer(player);
-        skullMeta.setDisplayName(TextUtil.convertColor("&6" + Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName()));
+        skullMeta.setDisplayName(TextUtil.convertColor("&a" + Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName()));
         skull.setItemMeta(skullMeta);
         return skull;
     }

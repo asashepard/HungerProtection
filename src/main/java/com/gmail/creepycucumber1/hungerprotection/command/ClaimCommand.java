@@ -41,17 +41,17 @@ public class ClaimCommand extends CommandBase {
         }
 
         player.sendMessage(TextUtil.convertColor("&3&lClaim Commands: &r\n" +
-                " - &o/claim &r&7| create a new 5x5 claim&r\n" +
-                " - &o/claimtool &r&7| get tools to manage claims&r\n" + //todo
-                " - &o/claims &r&7| list your claims&r\n" +
-                " - &o/claimtop &r&7| get server leaderboard&r\n" +
-                " - &o/buyclaimblocks [#] &r&7| buy claim blocks&r\n" +
-                " - &o/at [player] &r&7| accesstrust&r\n" +
-                " - &o/ct [player] &r&7| containertrust&r\n" +
-                " - &o/trust [player] &r&7| trust&r\n" +
-                " - &o/untrust [player] &r&7| untrust&r\n" +
-                " - &o/transferclaim [player] &r&7| transfer claim&r\n" +
-                " - &o/abandonclaim &r&7| abandon a claim&r"));
+                " &8- &r&o/claim &r&7| create a new 5x5 claim&r\n" +
+                " &8- &r&o/claimtool &r&7| get tools to manage claims&r\n" +
+                " &8- &r&o/claims &r&7| list your claims&r\n" +
+                " &8- &r&o/claimtop &r&7| get server leaderboard&r\n" +
+                " &8- &r&o/buyclaimblocks [#] &r&7| buy claim blocks&r\n" +
+                " &8- &r&o/at [player] &r&7| accesstrust&r\n" +
+                " &8- &r&o/ct [player] &r&7| containertrust&r\n" +
+                " &8- &r&o/trust [player] &r&7| trust&r\n" +
+                " &8- &r&o/untrust [player] &r&7| untrust&r\n" +
+                " &8- &r&o/transferclaim [player] &r&7| transfer claim&r\n" +
+                " &8- &r&o/abandonclaim &r&7| abandon a claim&r"));
 
         return true;
     }

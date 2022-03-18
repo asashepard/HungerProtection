@@ -31,7 +31,7 @@ public class BuyClaimBlocksCommand extends CommandBase {
         else {
             plugin.getVault().withdrawPlayer(player, blocks * 2);
             plugin.getPlayerManager().addClaimBlocks(player, blocks);
-            player.sendMessage(TextUtil.convertColor("&6You have purchased &e" + blocks + " &6claim block" + (blocks == 1 ? "s" : "") + " for &e$" + (blocks * 2) + "."));
+            player.sendMessage(TextUtil.convertColor("&aYou have purchased &f" + blocks + " &aclaim block" + (blocks == 1 ? "s" : "") + " for &f$" + (blocks * 2) + "&a."));
         }
 
         return true;

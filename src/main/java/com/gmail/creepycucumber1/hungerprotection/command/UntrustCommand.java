@@ -43,7 +43,7 @@ public class UntrustCommand extends CommandBase {
                 }
             }
             if(privatized) {
-                player.sendMessage(TextUtil.convertColor("&6All subdivisions that overlap the current location are now set to private."));
+                player.sendMessage(TextUtil.convertColor("&aAll subdivisions that overlap your current location are now set to private."));
                 return true;
             }
             plugin.getGuiManager().openGUI(player, new PlayersGUI(plugin, player, claimID, "untrust"));

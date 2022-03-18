@@ -23,17 +23,17 @@ public class ClaimBlocksGUI extends GUI {
 
         ItemStack dirt = new ItemStack(Material.DIRT);
         ItemMeta dirtMeta = dirt.getItemMeta();
-        dirtMeta.setDisplayName(TextUtil.convertColor("&6Buy 1 claim block &e$2"));
+        dirtMeta.setDisplayName(TextUtil.convertColor("&aBuy 1 claim block &e$2"));
         dirt.setItemMeta(dirtMeta);
 
         ItemStack grass = new ItemStack(Material.GRASS_BLOCK);
         ItemMeta grassMeta = dirt.getItemMeta();
-        grassMeta.setDisplayName(TextUtil.convertColor("&6Buy 10 claim blocks &e$20"));
+        grassMeta.setDisplayName(TextUtil.convertColor("&aBuy 10 claim blocks &e$20"));
         grass.setItemMeta(grassMeta);
 
         ItemStack moss = new ItemStack(Material.MOSS_BLOCK);
         ItemMeta mossMeta = dirt.getItemMeta();
-        mossMeta.setDisplayName(TextUtil.convertColor("&6Buy 100 claim blocks &e$200"));
+        mossMeta.setDisplayName(TextUtil.convertColor("&aBuy 100 claim blocks &e$200"));
         moss.setItemMeta(mossMeta);
 
         GUIItem infoItem = new GUIItem(info, "info");
@@ -61,7 +61,7 @@ public class ClaimBlocksGUI extends GUI {
             }
             plugin.getVault().withdrawPlayer(p, 2);
             plugin.getPlayerManager().addClaimBlocks(player, 1);
-            p.sendMessage(TextUtil.convertColor("&6You have purchased &e1 &6claim block for &e$2."));
+            p.sendMessage(TextUtil.convertColor("&aYou have purchased &f1 &aclaim block for &f$2."));
 
             p.closeInventory();
             plugin.getGuiManager().openGUI(p, new ClaimBlocksGUI(plugin, p));
@@ -73,7 +73,7 @@ public class ClaimBlocksGUI extends GUI {
             }
             plugin.getVault().withdrawPlayer(p, 20);
             plugin.getPlayerManager().addClaimBlocks(player, 10);
-            p.sendMessage(TextUtil.convertColor("&6You have purchased &e10 &6claim blocks for &e$20."));
+            p.sendMessage(TextUtil.convertColor("&aYou have purchased &f10 &aclaim blocks for &f$20."));
 
             p.closeInventory();
             plugin.getGuiManager().openGUI(p, new ClaimBlocksGUI(plugin, p));
@@ -85,7 +85,7 @@ public class ClaimBlocksGUI extends GUI {
             }
             plugin.getVault().withdrawPlayer(p, 200);
             plugin.getPlayerManager().addClaimBlocks(player, 100);
-            p.sendMessage(TextUtil.convertColor("&6You have purchased &e100 &6claim blocks for &e$200."));
+            p.sendMessage(TextUtil.convertColor("&aYou have purchased &f100 &aclaim blocks for &f$200."));
 
             p.closeInventory();
             plugin.getGuiManager().openGUI(p, new ClaimBlocksGUI(plugin, p));

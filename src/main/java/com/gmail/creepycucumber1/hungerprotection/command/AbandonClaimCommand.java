@@ -39,7 +39,7 @@ public class AbandonClaimCommand extends CommandBase {
         for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
             if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {
                 plugin.cm().removeSubdivision(subdivision, claimID);
-                player.sendMessage(TextUtil.convertColor("&6Subdivision successfully removed."));
+                player.sendMessage(TextUtil.convertColor("&aSubdivision successfully removed."));
                 return true;
             }
         }
@@ -48,8 +48,8 @@ public class AbandonClaimCommand extends CommandBase {
         int size = (int) Math.abs(box.getMaxX() - box.getMinX()) * (int) Math.abs(box.getMaxZ() - box.getMinZ());
         plugin.getPlayerManager().addClaimBlocks(player, size);
         plugin.cm().removeClaim(claimID);
-        player.sendMessage(TextUtil.convertColor("&6Claim successfully removed. You now have " +
-                plugin.getPlayerManager().getClaimBlocks(player) + " claim blocks remaining."));
+        player.sendMessage(TextUtil.convertColor("&aClaim successfully removed. You now have &f" +
+                plugin.getPlayerManager().getClaimBlocks(player) + " &aclaim blocks remaining."));
 
         return true;
     }

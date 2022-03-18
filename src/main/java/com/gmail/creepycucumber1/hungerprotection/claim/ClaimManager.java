@@ -42,7 +42,7 @@ public class ClaimManager {
         int size = Math.abs(x2 - x1) * Math.abs(z2 - z1);
         if(!isAdmin && plugin.getPlayerManager().getClaimBlocks(owner) < size) {
             owner.sendMessage(TextUtil.convertColor("&cYou need " + (size - plugin.getPlayerManager().getClaimBlocks(owner)) + " more claim blocks to claim this area."));
-            TextUtil.sendClickableCommand(owner, TextUtil.convertColor("&6&nBuy claim blocks"), "/buyclaimblocks", "Open the claim blocks menu");
+            TextUtil.sendClickableCommand(owner, TextUtil.convertColor("&aClick here to buy claim blocks"), "/buyclaimblocks", "Open the claim blocks menu");
             return false;
         }
 
@@ -78,8 +78,8 @@ public class ClaimManager {
         plugin.getDataManager().getConfig().createSection("claims." + claimID, map);
         plugin.getDataManager().saveConfig();
 
-        owner.sendMessage(TextUtil.convertColor("&6You have successfully made a claim!"));
-        if(!isAdmin) owner.sendMessage(TextUtil.convertColor("You have " + plugin.getPlayerManager().getClaimBlocks(owner) + " claim blocks remaining."));
+        owner.sendMessage(TextUtil.convertColor("&aYou have successfully made a claim!"));
+        if(!isAdmin) owner.sendMessage(TextUtil.convertColor("&7You have " + plugin.getPlayerManager().getClaimBlocks(owner) + " claim blocks remaining."));
         PacketManager.highlightClaim(owner, claimID, false);
 
         return true;
@@ -372,7 +372,7 @@ public class ClaimManager {
         int z2 = (int) box.getMinZ();
         int size = (int) box.getWidthX() * (int) box.getWidthZ();
 
-        result.append(TextUtil.convertColor("&6&lClaim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
+        result.append(TextUtil.convertColor("&2&lClaim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
         result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m &f| &7Created: " + getCreated(claimID)));
 
         if(!owner) return result.toString();

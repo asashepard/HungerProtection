@@ -70,7 +70,7 @@ public class EventManager implements Listener {
 
             String claimID = plugin.cm().getClaim(loc);
             if(claimID.equalsIgnoreCase("none")) {
-                p.sendMessage(TextUtil.convertColor("&6Nobody has claimed that block."));
+                p.sendMessage(TextUtil.convertColor("&aNobody has claimed that block."));
                 return;
             }
 
@@ -117,7 +117,7 @@ public class EventManager implements Listener {
                     pm.setIsClaiming(p, true);
                     pm.setX1(p, location.getBlockX());
                     pm.setZ1(p, location.getBlockZ());
-                    p.sendMessage(TextUtil.convertColor("&6Creating new claim! Click on another block to finish."));
+                    p.sendMessage(TextUtil.convertColor("&aCreating new claim! Click on another block to finish."));
                 }
                 //p owns the claim
                 else {
@@ -135,7 +135,7 @@ public class EventManager implements Listener {
                         pm.setActiveCID(p, claimID);
                         pm.setX1(p, x);
                         pm.setZ1(p, z);
-                        p.sendMessage(TextUtil.convertColor("&6Resizing claim! Click on another block to finish."));
+                        p.sendMessage(TextUtil.convertColor("&aResizing claim! Click on another block to finish."));
                     }
                     //second of resizing within own claim
                     else if(pm.isClaiming(p)) {
@@ -149,7 +149,7 @@ public class EventManager implements Listener {
                             pm.setActiveCID(p, claimID);
                             pm.setX1(p, x);
                             pm.setZ1(p, z);
-                            p.sendMessage(TextUtil.convertColor("&6Creating a subdivision! Click on another block within the claim to finish."));
+                            p.sendMessage(TextUtil.convertColor("&aCreating a subdivision! Click on another block within the claim to finish."));
                             PacketManager.highlightBlock(p, location, Material.SEA_LANTERN);
                         }
                         //second
@@ -166,7 +166,7 @@ public class EventManager implements Listener {
                             Subdivision subdivision = new Subdivision(sBox, plugin.cm().getExplosions(claimID), false);
                             PacketManager.highlightArea(p, subdivision.getVisualBox(), Material.SEA_LANTERN, Material.IRON_BLOCK, 6);
                             plugin.cm().addSubdivision(subdivision, claimID);
-                            p.sendMessage(TextUtil.convertColor("&6New subdivision created!"));
+                            p.sendMessage(TextUtil.convertColor("&aNew subdivision created!"));
                             pm.resetCurrentClaimingData(p);
                         }
                     }
@@ -191,7 +191,7 @@ public class EventManager implements Listener {
         else {
             if(delta > pm.getClaimBlocks(p)) {
                 p.sendMessage(TextUtil.convertColor("&cYou need " + Math.abs(delta) + " more claim blocks to resize in this way."));
-                TextUtil.sendClickableCommand(p, TextUtil.convertColor("&6&nBuy claim blocks"), "/buyclaimblocks", "Open the claim blocks GUI");
+                TextUtil.sendClickableCommand(p, TextUtil.convertColor("&aClick here to buy claim blocks"), "/buyclaimblocks", "Open the claim blocks GUI");
                 return;
             }
             pm.removeClaimBlocks(p, Math.abs(delta));

@@ -31,7 +31,7 @@ public class ClaimsGUI extends GUI {
 
             ItemStack claim = new ItemStack(material);
             ItemMeta claimMeta = claim.getItemMeta();
-            claimMeta.setDisplayName(TextUtil.convertColor("&6" + claimID));
+            claimMeta.setDisplayName(TextUtil.convertColor("&2" + claimID));
             ArrayList<String> lore = new ArrayList<>(Arrays.asList(plugin.cm().toString(player, claimID).split("\n")));
             lore.remove(1);
             claimMeta.setLore(lore);
@@ -49,7 +49,7 @@ public class ClaimsGUI extends GUI {
         ItemMeta infoMeta = info.getItemMeta();
         infoMeta.setDisplayName(TextUtil.convertColor("&fCurrent Claims"));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(TextUtil.convertColor("&7Total area claimed: &6" + totalSize + " blocks"));
+        lore.add(TextUtil.convertColor("&7Total area claimed: &a" + totalSize + " blocks"));
         infoMeta.setLore(lore);
         info.setItemMeta(infoMeta);
         GUIItem infoItem = new GUIItem(info, "info");

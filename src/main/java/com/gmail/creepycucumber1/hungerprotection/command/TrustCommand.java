@@ -43,7 +43,7 @@ public class TrustCommand extends CommandBase {
                 }
             }
             if(unPrivatized) {
-                player.sendMessage(TextUtil.convertColor("&6All subdivisions that overlap the current location are now no longer set to private."));
+                player.sendMessage(TextUtil.convertColor("&aAll subdivisions that overlap your current location are now no longer set to private."));
                 return true;
             }
             plugin.getGuiManager().openGUI(player, new PlayersGUI(plugin, player, claimID, "trust"));
