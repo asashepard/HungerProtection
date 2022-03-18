@@ -26,11 +26,11 @@ public class ContainerTrustCommand extends CommandBase {
         String claimID = plugin.cm().getClaim(player.getLocation());
 
         if(claimID.equalsIgnoreCase("none")) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim to manage permissions."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim to manage permissions."));
             return true;
         }
         if(!plugin.cm().getOwner(claimID).equals(player)) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim that you own to manage permissions."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim that you own to manage permissions."));
             return true;
         }
         if(args.length == 0) {

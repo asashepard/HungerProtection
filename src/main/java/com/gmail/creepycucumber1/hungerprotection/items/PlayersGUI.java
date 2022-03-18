@@ -16,7 +16,7 @@ public class PlayersGUI extends GUI {
     private Player player;
 
     public PlayersGUI(HungerProtection plugin, Player player, String claimID, String command) {
-        super(plugin, player.getUniqueId(), "&l/" + command + " in " + claimID.split("-")[0] + "...", Bukkit.getOnlinePlayers().size() / 9 + 1);
+        super(plugin, player.getUniqueId(), "&l/" + command + " in " + claimID.substring(0, 4) + "...", Bukkit.getOnlinePlayers().size() / 9 + 1);
         this.player = player;
 
         int index = 1;
@@ -31,7 +31,7 @@ public class PlayersGUI extends GUI {
         ItemMeta infoMeta = info.getItemMeta();
         infoMeta.setDisplayName(TextUtil.convertColor("&fOnline players are listed"));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(TextUtil.convertColor("&7Click on a player head to &o/" + command + " &r&7toward that player."));
+        lore.add(TextUtil.convertColor("&7Click on a player head to &o/" + command + " &r&7for that player."));
         lore.add(TextUtil.convertColor("&7Alternatively, use &o/" + command + " [player name]&r&7 as a command."));
         infoMeta.setLore(lore);
         info.setItemMeta(infoMeta);

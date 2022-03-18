@@ -19,6 +19,7 @@ public class AbandonClaimCommand extends CommandBase {
             String cid = args[0];
             plugin.cm().removeClaim(cid);
             sender.sendMessage("Successfully abandoned claim " + cid);
+            return true;
         }
 
         if(!(sender instanceof Player player)) {
@@ -28,11 +29,11 @@ public class AbandonClaimCommand extends CommandBase {
         String claimID = plugin.cm().getClaim(player.getLocation());
 
         if(claimID.equalsIgnoreCase("none")) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim to abandon it."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim to abandon it."));
             return true;
         }
         if(!plugin.cm().getOwner(claimID).equals(player)) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim you own to abandon it."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim you own to abandon it."));
             return true;
         }
 
@@ -45,8 +46,10 @@ public class AbandonClaimCommand extends CommandBase {
         }
 
         BoundingBox box = plugin.cm().getBoundingBox(claimID);
-        int size = (int) Math.abs(box.getMaxX() - box.getMinX()) * (int) Math.abs(box.getMaxZ() - box.getMinZ());
-        plugin.getPlayerManager().addClaimBlocks(player, size);
+        if(!player.isOp()) {
+            int size = (int) box.getWidthX() * (int) box.getWidthZ();
+            plugin.getPlayerManager().addClaimBlocks(player, size);
+        }
         plugin.cm().removeClaim(claimID);
         player.sendMessage(TextUtil.convertColor("&aClaim successfully removed. You now have &f" +
                 plugin.getPlayerManager().getClaimBlocks(player) + " &aclaim blocks remaining."));

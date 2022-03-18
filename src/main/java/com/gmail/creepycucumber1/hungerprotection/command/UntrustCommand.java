@@ -27,11 +27,11 @@ public class UntrustCommand extends CommandBase {
         String claimID = plugin.cm().getClaim(player.getLocation());
 
         if(claimID.equalsIgnoreCase("none")) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim to manage permissions."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim to manage permissions."));
             return true;
         }
         if(!plugin.cm().getOwner(claimID).equals(player)) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim that you own to manage permissions."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim that you own to manage permissions."));
             return true;
         }
         if(args.length == 0) {
@@ -47,7 +47,6 @@ public class UntrustCommand extends CommandBase {
                 return true;
             }
             plugin.getGuiManager().openGUI(player, new PlayersGUI(plugin, player, claimID, "untrust"));
-            player.sendMessage(TextUtil.convertColor("&cPlease specify a player to manage permissions or stand inside a subdivision to make it private."));
             return true;
         }
 

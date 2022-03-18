@@ -31,7 +31,7 @@ public class ClaimCommand extends CommandBase {
                 int x2 = b.getX() + 2;
                 int z2 = b.getZ() + 2;
                 if(plugin.cm().createNewClaim(x1, z1, x2, z2, player.isOp(), player.getWorld().getName(), player))
-                    player.sendMessage(TextUtil.convertColor("&eUse &o/claim help&r&e to see available actions."));
+                    player.sendMessage(TextUtil.convertColor("&7Use &a&o/claim help&r&7 to see available actions."));
 
                 return true;
             }
@@ -40,7 +40,7 @@ public class ClaimCommand extends CommandBase {
             return true;
         }
 
-        player.sendMessage(TextUtil.convertColor("&3&lClaim Commands: &r\n" +
+        player.sendMessage(TextUtil.convertColor("&2&lClaim Commands: &r\n" +
                 " &8- &r&o/claim &r&7| create a new 5x5 claim&r\n" +
                 " &8- &r&o/claimtool &r&7| get tools to manage claims&r\n" +
                 " &8- &r&o/claims &r&7| list your claims&r\n" +

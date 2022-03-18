@@ -25,7 +25,7 @@ public class BuyClaimBlocksCommand extends CommandBase {
         }
         int blocks = Integer.parseInt(args[0]);
         if(plugin.getVault().getBalance(player) < blocks * 2) {
-            player.sendMessage(TextUtil.convertColor("&cYou need $" + (blocks * 2 - plugin.getVault().getBalance(player)) + " more to purchase " + blocks + " blocks."));
+            player.sendMessage(TextUtil.convertColor("&7You need &f$" + (blocks * 2 - plugin.getVault().getBalance(player)) + " &7more to purchase &f" + blocks + " &7blocks."));
             return true;
         }
         else {

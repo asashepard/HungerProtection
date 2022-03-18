@@ -26,11 +26,11 @@ public class AccessTrustCommand extends CommandBase {
         String claimID = plugin.cm().getClaim(player.getLocation());
 
         if(claimID.equalsIgnoreCase("none")) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim to manage permissions."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim to manage permissions."));
             return true;
         }
         if(!plugin.cm().getOwner(claimID).equals(player)) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim that you own to manage permissions."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim that you own to manage permissions."));
             return true;
         }
         if(args.length == 0) {
@@ -42,7 +42,7 @@ public class AccessTrustCommand extends CommandBase {
         ArrayList<String> names = new ArrayList<>();
         for(OfflinePlayer p : pm.getPlayers()) names.add(p.getName());
         if(!names.contains(args[0])) {
-            player.sendMessage(TextUtil.convertColor("&cThat player hasn't logged on before."));
+            player.sendMessage(TextUtil.convertColor("&7That player hasn't logged on before."));
             return true;
         }
         OfflinePlayer toAdd = Bukkit.getOfflinePlayer(args[0]);
@@ -58,7 +58,7 @@ public class AccessTrustCommand extends CommandBase {
             return true;
         }
         else if(plugin.cm().getHasPermission(toAdd, claimID, 4)) {
-            player.sendMessage(TextUtil.convertColor("&cThat player is already access-trusted in this claim."));
+            player.sendMessage(TextUtil.convertColor("&7That player is already access-trusted in this claim."));
             return true;
         }
         plugin.cm().addAccess(toAdd, claimID);

@@ -26,12 +26,12 @@ public class TransferClaimCommand extends CommandBase {
         String claimID = plugin.cm().getClaim(player.getLocation());
 
         if(claimID.equalsIgnoreCase("none")) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim to transfer it."));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim to transfer it."));
             return true;
         }
         if(!plugin.cm().getOwner(claimID).equals(player)) {
-            player.sendMessage(TextUtil.convertColor("&cStand within a claim that you own to transfer it. " +
-                    "Imagine the chaos that might ensue if you could transfer any claim......"));
+            player.sendMessage(TextUtil.convertColor("&7Stand within a claim that you own to transfer it (" +
+                    "Imagine the chaos that might ensue if you could transfer any claim . . .)"));
             return true;
         }
         if(args.length == 0) {

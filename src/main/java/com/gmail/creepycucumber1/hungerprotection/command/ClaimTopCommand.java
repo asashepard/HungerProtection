@@ -42,7 +42,7 @@ public class ClaimTopCommand extends CommandBase {
                 page = Math.abs(Integer.parseInt(args[0]));
             } catch (NumberFormatException ignored) {}
         if(page > ((list.size() - 1) / 10) + 1) {
-            player.sendMessage(TextUtil.convertColor("&cThere aren't yet " + page + " pages of this " +
+            player.sendMessage(TextUtil.convertColor("&7There aren't yet " + page + " pages of this " +
                     (((list.size() - 1) / 10) + 1) + "-page leaderboard!"));
             return true;
         }

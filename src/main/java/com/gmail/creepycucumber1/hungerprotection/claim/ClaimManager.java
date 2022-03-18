@@ -152,12 +152,13 @@ public class ClaimManager {
             fZ1 = zMax;
 
         BoundingBox newBox = new BoundingBox(fX1, world.getMinHeight(), fZ1, x2, world.getMaxHeight(), z2);
+        newBox = newBox.expand(0, 0, 0, (fX1 == xMax ? 0 : 1), 0, (fZ1 == zMax ? 0 : 1));
 
         if(!overlaps(newBox, world, player, claimID) && containsAllSubdivisions(newBox, (ArrayList<Subdivision>) cfg.getList("subdivisions")))
             if(newBox.getWidthX() >= 4 && newBox.getWidthZ() >= 4)
                 cfg.set("boundingBox", newBox);
             else
-                player.sendMessage(TextUtil.convertColor("&cClaims must remain at least 5 blocks wide in either direction."));
+                player.sendMessage(TextUtil.convertColor("&7Claims must remain at least 5 blocks wide in either direction."));
 
         plugin.getDataManager().saveConfig();
     }
@@ -380,7 +381,7 @@ public class ClaimManager {
         //trusted, container trusted, access trusted
         result.append(TextUtil.convertColor("\n&9Trusted: "));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
-        result.append(TextUtil.convertColor("\n&aContainer-trusted: "));
+        result.append(TextUtil.convertColor("\n&dContainer-trusted: "));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
         result.append(TextUtil.convertColor("\n&eAccess-trusted: "));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");

@@ -23,7 +23,7 @@ public class ClaimToolsCommand extends CommandBase {
             return true;
         }
         if(Math.abs(plugin.getPlayerManager().getLastTools(player) - Instant.now().toEpochMilli()) < 300000) {
-            player.sendMessage(TextUtil.convertColor("&cEasy there, there's a five minute cooldown for those!"));
+            player.sendMessage(TextUtil.convertColor("&7Easy there, there's a five minute cooldown for those!"));
             return true;
         }
 
@@ -33,7 +33,7 @@ public class ClaimToolsCommand extends CommandBase {
                 emptySlots.add(i);
         }
         if(emptySlots.size() < 2) {
-            player.sendMessage(TextUtil.convertColor("&cHey, no need to flex! You have too few slots in your inventory!"));
+            player.sendMessage(TextUtil.convertColor("&7Hey, no need to flex! You have too few slots in your inventory!"));
             return true;
         }
 

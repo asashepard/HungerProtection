@@ -70,14 +70,14 @@ public class EventManager implements Listener {
 
             String claimID = plugin.cm().getClaim(loc);
             if(claimID.equalsIgnoreCase("none")) {
-                p.sendMessage(TextUtil.convertColor("&aNobody has claimed that block."));
+                p.sendMessage(TextUtil.convertColor("&aNo one has claimed that block."));
                 return;
             }
 
             String ownerName = plugin.cm().getOwner(claimID).getName();
             if(plugin.cm().getIsAdmin(claimID)) ownerName = "an administrator";
 
-            p.sendMessage(TextUtil.convertColor("&eThat block has been claimed by " + ownerName + "."));
+            p.sendMessage(TextUtil.convertColor("&7That block has been claimed by &2" + ownerName + "&7."));
             PacketManager.highlightClaim(p, claimID, false);
 
         }
@@ -159,7 +159,7 @@ public class EventManager implements Listener {
                             sBox.expand(0, 0, 0, 1, 0, 1);
                             BoundingBox bBox = plugin.cm().getBoundingBox(claimID);
                             if(!bBox.contains(sBox)) {
-                                p.sendMessage(TextUtil.convertColor("&cMake sure subdivisions are contained within their parent claim."));
+                                p.sendMessage(TextUtil.convertColor("&7Make sure subdivisions are contained within their parent claim."));
                                 pm.resetCurrentClaimingData(p);
                                 return;
                             }
@@ -175,7 +175,7 @@ public class EventManager implements Listener {
 
             }
             else {
-                p.sendMessage(TextUtil.convertColor("&cYou can't stake a claim here!"));
+                p.sendMessage(TextUtil.convertColor("&7You can't stake a claim here!"));
             }
 
         }
@@ -190,7 +190,7 @@ public class EventManager implements Listener {
         }
         else {
             if(delta > pm.getClaimBlocks(p)) {
-                p.sendMessage(TextUtil.convertColor("&cYou need " + Math.abs(delta) + " more claim blocks to resize in this way."));
+                p.sendMessage(TextUtil.convertColor("&7You need &f" + Math.abs(delta) + " &7more claim blocks to resize in this way."));
                 TextUtil.sendClickableCommand(p, TextUtil.convertColor("&aClick here to buy claim blocks"), "/buyclaimblocks", "Open the claim blocks GUI");
                 return;
             }
