@@ -30,7 +30,7 @@ public class TrustCommand extends CommandBase {
             player.sendMessage(TextUtil.convertColor("&7Stand within a claim to manage permissions."));
             return true;
         }
-        if(!plugin.cm().getOwner(claimID).equals(player)) {
+        if(!plugin.cm().getOwner(claimID).equals(player) && !(plugin.cm().getIsAdmin(claimID) && player.isOp())) {
             player.sendMessage(TextUtil.convertColor("&7Stand within a claim that you own to manage permissions."));
             return true;
         }
@@ -38,7 +38,9 @@ public class TrustCommand extends CommandBase {
             boolean unPrivatized = false;
             for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
                 if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {
+                    plugin.cm().removeSubdivision(subdivision, claimID);
                     subdivision.setPrivate(false);
+                    plugin.cm().addSubdivision(subdivision, claimID);
                     unPrivatized = true;
                 }
             }

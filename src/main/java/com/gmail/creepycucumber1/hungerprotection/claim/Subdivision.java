@@ -1,5 +1,6 @@
 package com.gmail.creepycucumber1.hungerprotection.claim;
 
+import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.BoundingBox;
@@ -11,6 +12,7 @@ import java.util.Map;
 @SerializableAs("Subdivision")
 public class Subdivision implements Comparable, ConfigurationSerializable {
 
+    private String parentClaim;
     private BoundingBox boundingBox;
     private boolean explosions;
     private boolean isPrivate;
@@ -38,6 +40,10 @@ public class Subdivision implements Comparable, ConfigurationSerializable {
     }
 
     //setter
+    public void setParentClaim(String parentClaim) {
+        this.parentClaim = parentClaim;
+    }
+
     public void setBoundingBox(BoundingBox boundingBox) {
         this.boundingBox = boundingBox;
     }
@@ -51,6 +57,10 @@ public class Subdivision implements Comparable, ConfigurationSerializable {
     }
 
     //getter
+    public String getParentClaim() {
+        return parentClaim;
+    }
+
     public BoundingBox getBoundingBox() {
         return boundingBox;
     }

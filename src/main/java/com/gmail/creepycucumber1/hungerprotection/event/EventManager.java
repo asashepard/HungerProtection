@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.TrappedChestBlock;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -29,9 +31,11 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EventManager implements Listener {
@@ -286,7 +290,14 @@ public class EventManager implements Listener {
                 Material.JUKEBOX, Material.LECTERN, Material.SHULKER_BOX, Material.DISPENSER, Material.BREWING_STAND);
         List<Material> structures = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
                 Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
-                Material.RESPAWN_ANCHOR);
+                Material.RESPAWN_ANCHOR, Material.REDSTONE_WIRE, Material.REPEATER, Material.COMPARATOR);
+
+        //placing block, should be handled by that
+        if(e.getPlayer().getItemInUse() != null && e.getPlayer().getItemInUse().getType().isBlock() ||
+                !(e.getClickedBlock().getType().isInteractable() && !e.getPlayer().isSneaking())) return;
+
+        if(e.getClickedBlock().getType().toString().toLowerCase().contains("door") &&
+                !e.getClickedBlock().getType().toString().toLowerCase().contains("trap")) return;
 
         if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
             if(!plugin.cm().getHasPermission(
@@ -309,8 +320,25 @@ public class EventManager implements Listener {
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getClickedBlock().getLocation()),
                 level)) {
-            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
+            if(!(level == 4 && !e.getClickedBlock().getType().isInteractable()))
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    //dedicated bone meal suppressor
+    public void onBoneMeal(BlockFertilizeEvent e) {
+        if(e.getPlayer() == null) return;
+        for(BlockState b : e.getBlocks()) {
+            if(!plugin.cm().getHasPermission(
+                    e.getPlayer(),
+                    plugin.cm().getClaim(b.getLocation()),
+                    2)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                e.setCancelled(true);
+                return;
+            }
         }
     }
 
@@ -337,6 +365,8 @@ public class EventManager implements Listener {
         int level = 4;
         if(e.getRightClicked() instanceof ArmorStand)
             level = 3;
+        if(e.getRightClicked() instanceof Sheep)
+            level = 5;
 
         if(plugin.cm().isPrivatized(e.getRightClicked().getLocation())) {
             if(!plugin.cm().getHasPermission(
@@ -494,6 +524,38 @@ public class EventManager implements Listener {
         if(b.getX() == box.getMinX() || b.getX() == box.getMaxX() ||
                 b.getZ() == box.getMinZ() || b.getZ() == box.getMaxZ()) {
             e.setCancelled(true);
+        }
+
+    }
+
+    @EventHandler
+    //piston extends across claim border
+    public void onPistonExtend(BlockPistonExtendEvent e) {
+        for(Block b : e.getBlocks()) {
+            String claimID = plugin.cm().getClaim(b.getLocation());
+            if(claimID.equalsIgnoreCase("none")) return;
+
+            BoundingBox box = plugin.cm().getVisualBox(claimID);
+
+            //protect private subdivisions
+            boolean isPrivateSub = false;
+            for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
+                if(subdivision.getIsPrivate() && subdivision.getBoundingBox().contains(b.getLocation().toVector())) {
+                    box = subdivision.getVisualBox();
+                    isPrivateSub = true;
+                    break;
+                }
+            }
+
+            //if not private subdivision, protect only if admin claim
+            if(!isPrivateSub && !plugin.cm().getIsAdmin(claimID)) return;
+
+            if(b.getX() == box.getMinX() || b.getX() == box.getMaxX() ||
+                    b.getZ() == box.getMinZ() || b.getZ() == box.getMaxZ()) {
+                e.setCancelled(true);
+                break;
+            }
+
         }
 
     }

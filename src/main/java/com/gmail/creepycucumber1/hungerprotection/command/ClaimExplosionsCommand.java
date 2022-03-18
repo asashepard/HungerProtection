@@ -36,7 +36,9 @@ public class ClaimExplosionsCommand extends CommandBase {
 
         for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
             if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {
+                plugin.cm().removeSubdivision(subdivision, claimID);
                 subdivision.setExplosions(!subdivision.getIsExplosions());
+                plugin.cm().addSubdivision(subdivision, claimID);
                 player.sendMessage(TextUtil.convertColor("&aSuccessfully toggled explosions in this subdivision! Explosions are now " +
                         (subdivision.getIsExplosions() ? "&2enabled&a." : "&4disabled&a.")));
                 return true;

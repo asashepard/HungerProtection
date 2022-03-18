@@ -29,7 +29,7 @@ public class ContainerTrustCommand extends CommandBase {
             player.sendMessage(TextUtil.convertColor("&7Stand within a claim to manage permissions."));
             return true;
         }
-        if(!plugin.cm().getOwner(claimID).equals(player)) {
+        if(!plugin.cm().getOwner(claimID).equals(player) && !(plugin.cm().getIsAdmin(claimID) && player.isOp())) {
             player.sendMessage(TextUtil.convertColor("&7Stand within a claim that you own to manage permissions."));
             return true;
         }
