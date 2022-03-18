@@ -335,17 +335,23 @@ public class ClaimManager {
         if(claimID.equalsIgnoreCase("none")) return true;
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         boolean explosions = getExplosions(claimID);
-        for(Subdivision subdivision : (ArrayList<Subdivision>) cfg.getList("subdivisions")) {
-            if(subdivision.getBoundingBox().contains(loc.toVector()))
-                explosions = subdivision.getIsExplosions();
-        }
+        try {
+            for(Subdivision subdivision : (ArrayList<Subdivision>) cfg.getList("subdivisions")) {
+                if(subdivision.getBoundingBox().contains(loc.toVector()))
+                    explosions = subdivision.getIsExplosions();
+            }
+        } catch (NullPointerException ignored) {}
         return explosions;
     }
 
     public ArrayList<Subdivision> getSubdivisions(String claimID) {
-        ArrayList<Subdivision> list = new ArrayList<>();
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
-        list.addAll((ArrayList<Subdivision>) cfg.getList("subdivisions"));
+        try {
+            cfg.getList("subdivisions");
+        } catch (NullPointerException e) {
+            return new ArrayList<>();
+        }
+        ArrayList<Subdivision> list = new ArrayList<>((ArrayList<Subdivision>) cfg.getList("subdivisions"));
         return list;
     }
 

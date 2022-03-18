@@ -8,6 +8,7 @@ import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimInspectionTool;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
+import io.papermc.paper.event.block.BlockPreDispenseEvent;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.level.block.TrappedChestBlock;
 import org.bukkit.*;
@@ -531,8 +532,26 @@ public class EventManager implements Listener {
     @EventHandler
     //piston extends across claim border
     public void onPistonExtend(BlockPistonExtendEvent e) {
-        for(Block b : e.getBlocks()) {
-            String claimID = plugin.cm().getClaim(b.getLocation());
+
+        List<Block> blocks = e.getBlocks();
+
+        //normal piston, not sticky
+        Bukkit.getLogger().info(String.valueOf(e.getBlock().getType()));
+        if(e.getBlock().getType().equals(Material.PISTON)) {
+            ArrayList<Block> connected = new ArrayList<>();
+            Block b = e.getBlock().getRelative(e.getDirection());
+            int count = 0;
+            while(!b.getType().equals(Material.AIR) && count <= 12) {
+                count++;
+                connected.add(b);
+                b = b.getRelative(e.getDirection());
+            }
+            blocks = connected;
+        }
+
+        for(Block b : blocks) {
+
+            String claimID = plugin.cm().getClaim(b.getRelative(e.getDirection()).getLocation());
             if(claimID.equalsIgnoreCase("none")) return;
 
             BoundingBox box = plugin.cm().getVisualBox(claimID);
@@ -550,12 +569,48 @@ public class EventManager implements Listener {
             //if not private subdivision, protect only if admin claim
             if(!isPrivateSub && !plugin.cm().getIsAdmin(claimID)) return;
 
-            if(b.getX() == box.getMinX() || b.getX() == box.getMaxX() ||
-                    b.getZ() == box.getMinZ() || b.getZ() == box.getMaxZ()) {
+            if(Math.abs(b.getX() - box.getMinX()) <= 1 || Math.abs(b.getX() - box.getMaxX()) <= 1 ||
+                    Math.abs(b.getZ() - box.getMinZ()) <= 1 || Math.abs(b.getZ() - box.getMaxZ()) <= 1) {
                 e.setCancelled(true);
                 break;
             }
 
+        }
+
+    }
+
+    @EventHandler
+    //dispenser dispenses
+    public void onDispense(BlockDispenseEvent e) {
+
+        Block b = e.getBlock();
+        String cid = plugin.cm().getClaim(b.getLocation());
+
+        List<Block> list = List.of(b.getRelative(BlockFace.NORTH), b.getRelative(BlockFace.EAST),
+                b.getRelative(BlockFace.SOUTH), b.getRelative(BlockFace.WEST));
+        boolean different = false;
+        for(Block adj : list) {
+            Bukkit.getLogger().info(adj.getType().toString());
+            //different sides of admin claim border
+            if(!plugin.cm().getClaim(adj.getLocation()).equalsIgnoreCase(cid) &&
+                    (plugin.cm().getIsAdmin(cid) || plugin.cm().getIsAdmin(plugin.cm().getClaim(adj.getLocation()))))
+                different = true;
+
+            //different sides of private subdivision border
+            if(plugin.cm().getClaim(adj.getLocation()).equalsIgnoreCase(cid)) {
+                for(Subdivision subdivision : plugin.cm().getSubdivisions(cid)) {
+                    if(subdivision.getIsPrivate() && (subdivision.getBoundingBox().contains(b.getLocation().toVector())
+                           ^ subdivision.getBoundingBox().contains(adj.getLocation().toVector()))) {
+                        different = true;
+                        break;
+                    }
+                }
+            }
+
+            if(different) {
+                e.setCancelled(true);
+                return;
+            }
         }
 
     }
