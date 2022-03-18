@@ -536,7 +536,6 @@ public class EventManager implements Listener {
         List<Block> blocks = e.getBlocks();
 
         //normal piston, not sticky
-        Bukkit.getLogger().info(String.valueOf(e.getBlock().getType()));
         if(e.getBlock().getType().equals(Material.PISTON)) {
             ArrayList<Block> connected = new ArrayList<>();
             Block b = e.getBlock().getRelative(e.getDirection());
@@ -590,7 +589,6 @@ public class EventManager implements Listener {
                 b.getRelative(BlockFace.SOUTH), b.getRelative(BlockFace.WEST));
         boolean different = false;
         for(Block adj : list) {
-            Bukkit.getLogger().info(adj.getType().toString());
             //different sides of admin claim border
             if(!plugin.cm().getClaim(adj.getLocation()).equalsIgnoreCase(cid) &&
                     (plugin.cm().getIsAdmin(cid) || plugin.cm().getIsAdmin(plugin.cm().getClaim(adj.getLocation()))))
