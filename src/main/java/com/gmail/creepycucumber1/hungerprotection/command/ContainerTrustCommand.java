@@ -64,6 +64,6 @@ public class ContainerTrustCommand extends CommandBase {
         plugin.cm().addContainer(toAdd, claimID);
         player.sendMessage(TextUtil.convertColor("&aSuccessfully container-trusted " + args[0] + " in this claim."));
 
-        return false;
+        return true;
     }
 }

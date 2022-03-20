@@ -74,6 +74,6 @@ public class TransferClaimCommand extends CommandBase {
         plugin.cm().setOwner(toTransfer, claimID);
         player.sendMessage(TextUtil.convertColor("&aSuccessfully transferred this claim to " + args[0] + "."));
 
-        return false;
+        return true;
     }
 }

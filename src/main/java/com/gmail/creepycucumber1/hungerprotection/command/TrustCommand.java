@@ -78,6 +78,6 @@ public class TrustCommand extends CommandBase {
         plugin.cm().addBuilder(toAdd, claimID);
         player.sendMessage(TextUtil.convertColor("&aSuccessfully trusted " + args[0] + " in this claim."));
 
-        return false;
+        return true;
     }
 }

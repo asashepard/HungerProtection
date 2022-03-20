@@ -20,6 +20,7 @@ public class ClaimsCommand extends CommandBase {
         }
 
         plugin.getGuiManager().openGUI(player, new ClaimsGUI(plugin, player));
+
         return true;
     }
 }

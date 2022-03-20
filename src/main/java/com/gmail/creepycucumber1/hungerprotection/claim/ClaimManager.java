@@ -40,7 +40,7 @@ public class ClaimManager {
 
         //price management
         int size = Math.abs(x2 - x1) * Math.abs(z2 - z1);
-        if(!isAdmin && plugin.getPlayerManager().getClaimBlocks(owner) < size) {
+        if(!owner.isOp() && plugin.getPlayerManager().getClaimBlocks(owner) < size) {
             owner.sendMessage(TextUtil.convertColor("&cYou need " + (size - plugin.getPlayerManager().getClaimBlocks(owner)) + " more claim blocks to claim this area."));
             TextUtil.sendClickableCommand(owner, TextUtil.convertColor("&aClick here to buy claim blocks"), "/buyclaimblocks", "Open the claim blocks menu");
             return false;
@@ -74,12 +74,12 @@ public class ClaimManager {
         map.put("subdivisions", subdivisions);
         map.put("explosions", false);
 
-        if(!isAdmin) plugin.getPlayerManager().removeClaimBlocks(owner, size);
+        if(!owner.isOp()) plugin.getPlayerManager().removeClaimBlocks(owner, size);
         plugin.getDataManager().getConfig().createSection("claims." + claimID, map);
         plugin.getDataManager().saveConfig();
 
         owner.sendMessage(TextUtil.convertColor("&aYou have successfully made a claim!"));
-        if(!isAdmin) owner.sendMessage(TextUtil.convertColor("&7You have " + plugin.getPlayerManager().getClaimBlocks(owner) + " claim blocks remaining."));
+        if(!owner.isOp()) owner.sendMessage(TextUtil.convertColor("&7You have " + plugin.getPlayerManager().getClaimBlocks(owner) + " claim blocks remaining."));
         PacketManager.highlightClaim(owner, claimID, false);
 
         return true;

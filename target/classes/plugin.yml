@@ -35,3 +35,5 @@ commands:
     description: Trust another player to build in your claim(s)
   untrust:
     description: Strip another player's permissions in your claim(s)
+  reloadclaims:
+    description: Refresh and sync claims with the data file

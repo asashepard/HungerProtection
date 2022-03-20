@@ -35,6 +35,7 @@ public class UntrustCommand extends CommandBase {
             return true;
         }
         if(args.length == 0) {
+            //subdivisions
             boolean privatized = false;
             for(Subdivision subdivision : plugin.cm().getSubdivisions(claimID)) {
                 if(subdivision.getBoundingBox().contains(player.getLocation().toVector())) {

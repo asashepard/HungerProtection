@@ -3,8 +3,6 @@ package com.gmail.creepycucumber1.hungerprotection.command;
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.event.PacketManager;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
-import net.minecraft.server.packs.repository.Pack;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

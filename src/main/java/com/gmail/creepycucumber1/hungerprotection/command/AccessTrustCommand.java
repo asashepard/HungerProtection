@@ -64,6 +64,6 @@ public class AccessTrustCommand extends CommandBase {
         plugin.cm().addAccess(toAdd, claimID);
         player.sendMessage(TextUtil.convertColor("&aSuccessfully access-trusted " + args[0] + " in this claim."));
 
-        return false;
+        return true;
     }
 }

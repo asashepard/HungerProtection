@@ -20,6 +20,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -34,6 +35,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,6 +95,13 @@ public class EventManager implements Listener {
             Block block = p.getTargetBlock(5);
             if(block == null || block.getType().equals(Material.AIR)) return;
             Location location = block.getLocation();
+
+            //end check
+            if(location.getWorld().toString().toLowerCase().contains("end") &&
+                    Math.abs(location.getX()) <= 150 && Math.abs(location.getZ()) <= 150) {
+                p.sendMessage(TextUtil.convertColor("&7You can't stake a claim here!"));
+                return;
+            }
 
             String claimID = plugin.cm().getClaim(location);
             PlayerManager pm = plugin.getPlayerManager();
@@ -220,9 +230,19 @@ public class EventManager implements Listener {
         }
     }
 
-    // enforce claim rules
+    // dismount and mount (for stairs)
 
     @EventHandler
+    public void onDismount(EntityDismountEvent e) {
+        if(!(e.getEntity() instanceof Player player)) return;
+        if(e.getDismounted() instanceof Egg) {
+            player.teleport(player.getLocation().add(0, 1.5, 0));
+            e.getDismounted().remove();
+        }
+    }
+
+    // enforce claim rules
+
     //break a block
     public void onBlockBreak(BlockBreakEvent e) {
 
@@ -244,6 +264,7 @@ public class EventManager implements Listener {
             TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
             e.setCancelled(true);
         }
+
     }
 
     @EventHandler
@@ -275,6 +296,20 @@ public class EventManager implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         if(e.getClickedBlock() == null) return;
         if(e.getAction().isLeftClick()) return;
+
+        //sitting!
+        if(e.getClickedBlock().getType().toString().toLowerCase().contains("stair") && !e.getPlayer().isSneaking() &&
+                !(e.getPlayer().getVehicle() instanceof Egg)) {
+            World w = e.getClickedBlock().getWorld();
+            Entity egg = w.spawnEntity(e.getClickedBlock().getLocation().add(0.5, 0.05, 0.5), EntityType.EGG);
+            egg.setInvulnerable(true);
+            egg.setPersistent(true);
+            egg.setGravity(false);
+            egg.addPassenger(e.getPlayer());
+
+            e.setCancelled(true);
+            return;
+        }
 
         //placing block, should be handled by that
         if(e.getPlayer().getItemInUse() != null && e.getPlayer().getItemInUse().getType().isBlock() ||
@@ -427,11 +462,14 @@ public class EventManager implements Listener {
         }
         if(!(e.getDamager() instanceof Player player)) return;
 
+        //build-protected entities
         if(!(e.getEntity() instanceof AbstractHorse || e.getEntity() instanceof Cat ||
                 e.getEntity() instanceof Parrot || e.getEntity() instanceof ChestedHorse ||
                 e.getEntity() instanceof Hanging || e.getEntity() instanceof ArmorStand ||
                 e.getEntity() instanceof AbstractVillager || e.getEntity() instanceof EnderCrystal ||
-                e.getEntity() instanceof Minecart || e.getEntity() instanceof Boat)) return;
+                e.getEntity() instanceof Minecart || e.getEntity() instanceof Boat) ||
+                e.getEntity() instanceof Cow || e.getEntity() instanceof Sheep ||
+                e.getEntity() instanceof Pig || e.getEntity() instanceof Chicken) return;
 
         if(!plugin.cm().getHasPermission(
                 player,
@@ -579,7 +617,7 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
-    //dispenser dispenses
+    //dispenser dispenses across claim border
     public void onDispense(BlockDispenseEvent e) {
 
         Block b = e.getBlock();

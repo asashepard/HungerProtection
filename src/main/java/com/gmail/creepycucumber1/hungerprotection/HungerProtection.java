@@ -123,6 +123,7 @@ public final class HungerProtection extends JavaPlugin {
         commands.add(new TransferClaimCommand(this));
         commands.add(new TrustCommand(this));
         commands.add(new UntrustCommand(this));
+        commands.add(new ReloadClaimsCommand(this));
 
         return commands;
     }

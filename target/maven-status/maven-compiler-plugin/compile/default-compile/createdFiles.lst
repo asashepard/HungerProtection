@@ -33,4 +33,5 @@ com\gmail\creepycucumber1\hungerprotection\command\TransferClaimCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\TrustCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\AbandonClaimCommand.class
 com\gmail\creepycucumber1\hungerprotection\items\ClaimTool.class
+com\gmail\creepycucumber1\hungerprotection\command\ReloadClaimsCommand.class
 com\gmail\creepycucumber1\hungerprotection\event\PacketManager$1.class
