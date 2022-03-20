@@ -6,13 +6,10 @@ import com.gmail.creepycucumber1.hungerprotection.util.Util;
 import io.netty.channel.*;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundBlockBreakAckPacket;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,7 +44,7 @@ public class PacketManager implements Listener {
     }
 
     public void removePlayer(Player player) {
-        Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
+        Channel channel = ((CraftPlayer) player).getHandle().b.a.m;
         channel.eventLoop().submit(() -> {
             channel.pipeline().remove(player.getName());
             return null;
@@ -75,7 +72,7 @@ public class PacketManager implements Listener {
 
         };
 
-        ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().connection.connection.channel.pipeline();
+        ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().b.a.m.pipeline();
         pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
     }
 

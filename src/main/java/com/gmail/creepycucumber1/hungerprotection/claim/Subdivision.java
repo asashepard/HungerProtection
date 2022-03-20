@@ -1,6 +1,5 @@
 package com.gmail.creepycucumber1.hungerprotection.claim;
 
-import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.BoundingBox;

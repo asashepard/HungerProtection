@@ -1,15 +1,8 @@
 package com.gmail.creepycucumber1.hungerprotection.command;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
-import com.gmail.creepycucumber1.hungerprotection.claim.PlayerManager;
-import com.gmail.creepycucumber1.hungerprotection.items.PlayersGUI;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 public class ReloadClaimsCommand extends CommandBase {
     public ReloadClaimsCommand(HungerProtection plugin) {

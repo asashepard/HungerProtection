@@ -1,9 +1,7 @@
 package com.gmail.creepycucumber1.hungerprotection.util;
 
-import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
