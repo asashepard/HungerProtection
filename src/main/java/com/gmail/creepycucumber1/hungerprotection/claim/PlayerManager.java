@@ -2,6 +2,7 @@ package com.gmail.creepycucumber1.hungerprotection.claim;
 
 import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -32,6 +33,7 @@ public class PlayerManager {
         map.put("x1", player.getLocation().getBlockX());
         map.put("z1", player.getLocation().getBlockZ());
         map.put("lastTools", Instant.now().toEpochMilli() - 300000);
+        map.put("pwarp", new ArrayList<String>());
 
         plugin.getDataManager().getConfig().createSection("players." + uuid, map);
         plugin.getDataManager().saveConfig();
@@ -96,6 +98,20 @@ public class PlayerManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void setPwarp(OfflinePlayer player, Location location, String name, boolean empty) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        ArrayList<String> pwarp = new ArrayList<>();
+        if(!empty) {
+            pwarp.add(name);
+            pwarp.add(location.getWorld().getName());
+            pwarp.add(String.valueOf((int) location.getX() + 0.5));
+            pwarp.add(String.valueOf((int) location.getY()));
+            pwarp.add(String.valueOf((int) location.getZ() + 0.5));
+        }
+        cfg.set("pwarp", pwarp);
+        plugin.getDataManager().saveConfig();
+    }
+
     //getter
     public ArrayList<OfflinePlayer> getPlayers() {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players");
@@ -139,6 +155,11 @@ public class PlayerManager {
     public long getLastTools(Player player) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
         return cfg.getLong("lastTools");
+    }
+
+    public ArrayList<String> getPwarp(OfflinePlayer player) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("players." + player.getUniqueId().toString());
+        return (ArrayList<String>) cfg.getStringList("pwarp");
     }
 
 }

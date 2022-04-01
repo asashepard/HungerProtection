@@ -10,7 +10,7 @@ public class Util {
     public static Location getHighest(Player p, int x, int z) {
         World world = p.getWorld();
         int playerY = p.getLocation().getBlockY();
-        int highestY = world.getHighestBlockYAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES);
+        int highestY = world.getHighestBlockYAt(x, z, HeightMap.WORLD_SURFACE);
 
         //above ground
         if(highestY < playerY) return new Location(world, x, highestY, z);
@@ -18,11 +18,11 @@ public class Util {
         //underground
         int y = playerY;
         if(world.getBlockAt(x, y, z).isCollidable()) {
-            while(world.getBlockAt(x, y + 1, z).getType().isCollidable() || world.getBlockAt(x, y, z).isLiquid())
+            while(y < world.getMaxHeight() && world.getBlockAt(x, y + 1, z).getType().isCollidable() || world.getBlockAt(x, y, z).isLiquid())
                 y++;
         }
         else {
-            while(!world.getBlockAt(x, y, z).getType().isCollidable() && !world.getBlockAt(x, y, z).isLiquid())
+            while(y > world.getMinHeight() && !world.getBlockAt(x, y, z).getType().isCollidable() && !world.getBlockAt(x, y, z).isLiquid())
                 y--;
         }
 

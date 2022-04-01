@@ -1,6 +1,6 @@
 # HungerProtection
 
-Claim utility and grief prevention for Paper designed for use with ItsGJK/gabrieljkeller's HungerCore and other Hunger custom plugins.
+Claim utility and grief prevention for PaperMC designed loosely for use with ItsGJK/gabrieljkeller's HungerCore2.
 
 Commands:
 - /claim [(optional) help]

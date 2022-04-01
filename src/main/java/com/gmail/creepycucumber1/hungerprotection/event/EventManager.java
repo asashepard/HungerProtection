@@ -21,9 +21,9 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.BoundingBox;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +86,7 @@ public class EventManager implements Listener {
             if(location.getWorld().toString().toLowerCase().contains("end") &&
                     Math.abs(location.getX()) <= 150 && Math.abs(location.getZ()) <= 150) {
                 p.sendMessage(TextUtil.convertColor("&7You can't stake a claim here!"));
+                plugin.getPlayerManager().resetCurrentClaimingData(p);
                 return;
             }
 
@@ -184,13 +185,13 @@ public class EventManager implements Listener {
 
     private void resizeClaim(Player p, String cid, int x2, int z2) {
         PlayerManager pm = plugin.getPlayerManager();
-        int delta = (int) plugin.cm().getBoundingBox(cid).getWidthX() * (int) plugin.cm().getBoundingBox(cid).getWidthZ() -
-                (Math.abs(pm.getX1(p) - x2) * Math.abs(pm.getZ1(p) - z2));
-        if(delta > 0) {
+        int delta = (int) plugin.cm().getBoundingBox(cid).getWidthX() * (int) plugin.cm().getBoundingBox(cid).getWidthZ() - //old box
+                (Math.abs(pm.getX1(p) - x2) * Math.abs(pm.getZ1(p) - z2)); //new box
+        if(delta > 0) { //smaller
             pm.addClaimBlocks(p, delta);
         }
-        else {
-            if(delta > pm.getClaimBlocks(p)) {
+        else { //bigger
+            if(Math.abs(delta) > pm.getClaimBlocks(p)) {
                 p.sendMessage(TextUtil.convertColor("&7You need &f" + Math.abs(delta) + " &7more claim blocks to resize in this way."));
                 TextUtil.sendClickableCommand(p, TextUtil.convertColor("&aClick here to buy claim blocks"), "/buyclaimblocks", "Open the claim blocks GUI");
                 return;
@@ -213,17 +214,6 @@ public class EventManager implements Listener {
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(4));
                 e.setCancelled(true);
             }
-        }
-    }
-
-    // dismount and mount (for stairs)
-
-    @EventHandler
-    public void onDismount(EntityDismountEvent e) {
-        if(!(e.getEntity() instanceof Player player)) return;
-        if(e.getDismounted() instanceof Egg) {
-            player.teleport(player.getLocation().add(0, 1.5, 0));
-            e.getDismounted().remove();
         }
     }
 
@@ -283,26 +273,16 @@ public class EventManager implements Listener {
         if(e.getClickedBlock() == null) return;
         if(e.getAction().isLeftClick()) return;
 
-        //sitting!
-        if(e.getClickedBlock().getType().toString().toLowerCase().contains("stair") && !e.getPlayer().isSneaking() &&
-                !(e.getPlayer().getVehicle() instanceof Egg)) {
-            World w = e.getClickedBlock().getWorld();
-            Entity egg = w.spawnEntity(e.getClickedBlock().getLocation().add(0.5, 0.05, 0.5), EntityType.EGG);
-            egg.setInvulnerable(true);
-            egg.setPersistent(true);
-            egg.setGravity(false);
-            egg.addPassenger(e.getPlayer());
-
-            e.setCancelled(true);
-            return;
-        }
-
         //placing block, should be handled by that
         if(e.getPlayer().getItemInUse() != null && e.getPlayer().getItemInUse().getType().isBlock() ||
                 !(e.getClickedBlock().getType().isInteractable() && !e.getPlayer().isSneaking())) return;
 
+        //exceptions
         if(e.getClickedBlock().getType().toString().toLowerCase().contains("door") &&
                 !e.getClickedBlock().getType().toString().toLowerCase().contains("trap")) return;
+
+        if(Tag.BUTTONS.isTagged(e.getClickedBlock().getType()) &&
+                plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getClickedBlock().getLocation()))) return;
 
         List<Material> universal = List.of(Material.CRAFTING_TABLE, Material.LOOM, Material.LODESTONE,
                 Material.CARTOGRAPHY_TABLE, Material.ENCHANTING_TABLE, Material.STONECUTTER,
@@ -314,13 +294,7 @@ public class EventManager implements Listener {
                 Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
                 Material.RESPAWN_ANCHOR, Material.REDSTONE_WIRE, Material.REPEATER, Material.COMPARATOR);
 
-        //placing block, should be handled by that
-        if(e.getPlayer().getItemInUse() != null && e.getPlayer().getItemInUse().getType().isBlock() ||
-                !(e.getClickedBlock().getType().isInteractable() && !e.getPlayer().isSneaking())) return;
-
-        if(e.getClickedBlock().getType().toString().toLowerCase().contains("door") &&
-                !e.getClickedBlock().getType().toString().toLowerCase().contains("trap")) return;
-
+        //private
         if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
@@ -342,7 +316,7 @@ public class EventManager implements Listener {
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getClickedBlock().getLocation()),
                 level)) {
-            if(!(level == 4 && !e.getClickedBlock().getType().isInteractable()))
+            if(!(level == 4 && !e.getClickedBlock().getType().isInteractable()) || Tag.STAIRS.isTagged(e.getClickedBlock().getType()))
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
             e.setCancelled(true);
         }
@@ -364,10 +338,12 @@ public class EventManager implements Listener {
         }
     }
 
-    /*@EventHandler
-    //left-click a vehicle
+    @EventHandler
+    //left-click a vehicle (minecart in admin claim)
     public void onVehicleDamage(VehicleDamageEvent e) {
         if(e.getAttacker() == null || !(e.getAttacker() instanceof Player player)) return;
+        if(!(e.getVehicle() instanceof Minecart)) return;
+        if(!plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getVehicle().getLocation()))) return;
         if(!plugin.cm().getHasPermission(
                 player,
                 plugin.cm().getClaim(e.getVehicle().getLocation()),
@@ -375,7 +351,7 @@ public class EventManager implements Listener {
             TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
             e.setCancelled(true);
         }
-    }*/
+    }
 
     @EventHandler
     //right-click an entity
@@ -483,6 +459,14 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
+    //explosion again
+    public void onExplosion(BlockExplodeEvent e) {
+        e.blockList().removeIf(b -> !plugin.cm().getExplosions(
+                b.getLocation()
+        ));
+    }
+
+    @EventHandler
     //entity damage in admin claim
     public void onEntityDamage(EntityDamageEvent e) {
         if(!plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getEntity().getLocation()))) return;
@@ -532,6 +516,7 @@ public class EventManager implements Listener {
     @EventHandler
     //liquid flows across claim border
     public void onLiquidFlow(BlockFromToEvent e) {
+        if(e.getBlock().getWorld().toString().toLowerCase().contains("nether")) return;
         if(!e.getBlock().getType().equals(Material.LAVA)) {
             if(plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getToBlock().getLocation()))) {
                 if(!e.getBlock().getType().equals(Material.WATER)) return; //water flow protected in admin claims

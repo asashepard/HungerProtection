@@ -1,7 +1,10 @@
+com\gmail\creepycucumber1\hungerprotection\command\PwarpCommand.class
 com\gmail\creepycucumber1\hungerprotection\items\GUIManager.class
 com\gmail\creepycucumber1\hungerprotection\runnable\GeneralMonitor$1.class
 com\gmail\creepycucumber1\hungerprotection\items\GUI.class
+com\gmail\creepycucumber1\hungerprotection\runnable\Teleport.class
 com\gmail\creepycucumber1\hungerprotection\claim\ClaimManager.class
+com\gmail\creepycucumber1\hungerprotection\runnable\Teleport$1.class
 com\gmail\creepycucumber1\hungerprotection\items\PlayersGUI.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimExplosionsCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimToolsCommand.class
@@ -31,7 +34,9 @@ com\gmail\creepycucumber1\hungerprotection\command\AccessTrustCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimsCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\TransferClaimCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\TrustCommand.class
+com\gmail\creepycucumber1\hungerprotection\util\ItemUtil.class
 com\gmail\creepycucumber1\hungerprotection\command\AbandonClaimCommand.class
 com\gmail\creepycucumber1\hungerprotection\items\ClaimTool.class
+com\gmail\creepycucumber1\hungerprotection\items\PwarpGUI.class
 com\gmail\creepycucumber1\hungerprotection\command\ReloadClaimsCommand.class
 com\gmail\creepycucumber1\hungerprotection\event\PacketManager$1.class

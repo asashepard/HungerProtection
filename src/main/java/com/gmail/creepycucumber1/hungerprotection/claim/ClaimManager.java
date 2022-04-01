@@ -23,6 +23,9 @@ public class ClaimManager {
         this.plugin = plugin;
     }
 
+    public static BoundingBox END_RESTRICTION = new BoundingBox(-150, Bukkit.getWorld("world_the_end").getMinHeight(), -150,
+            150, Bukkit.getWorld("world_the_end").getMaxHeight(), 150);
+
     public boolean createNewClaim(int x1, int z1, int x2, int z2, boolean isAdmin, String worldName, Player owner) {
         //--perform checks--
 
@@ -100,6 +103,10 @@ public class ClaimManager {
     }
 
     public boolean overlaps(BoundingBox box, World world, Player player, String exempt) {
+        if(world.equals(Bukkit.getWorld("world_the_end")) && box.overlaps(END_RESTRICTION)) {
+            player.sendMessage(TextUtil.convertColor("&7The main End island is a public area."));
+            return true;
+        }
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims");
         for(String key : cfg.getKeys(false)) {
             if(!getWorld(key).equals(world)) continue;
@@ -158,7 +165,7 @@ public class ClaimManager {
             if(newBox.getWidthX() >= 4 && newBox.getWidthZ() >= 4)
                 cfg.set("boundingBox", newBox);
             else
-                player.sendMessage(TextUtil.convertColor("&7Claims must remain at least 5 blocks wide in either direction."));
+                player.sendMessage(TextUtil.convertColor("&cClaims must remain at least 5 blocks wide in either direction."));
 
         plugin.getDataManager().saveConfig();
     }
@@ -380,7 +387,7 @@ public class ClaimManager {
         int size = (int) box.getWidthX() * (int) box.getWidthZ();
 
         result.append(TextUtil.convertColor("&2&lClaim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
-        result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m &f| &7Created: " + getCreated(claimID)));
+        result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m &8| &7Created: " + getCreated(claimID)));
 
         if(!owner) return result.toString();
 

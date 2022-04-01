@@ -37,3 +37,5 @@ commands:
     description: Strip another player's permissions in your claim(s)
   reloadclaims:
     description: Refresh and sync claims with the data file
+  pwarp:
+    description: Use the player warps system

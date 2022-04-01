@@ -44,7 +44,7 @@ public class PacketManager implements Listener {
     }
 
     public void removePlayer(Player player) {
-        Channel channel = ((CraftPlayer) player).getHandle().b.a.m;
+        Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
         channel.eventLoop().submit(() -> {
             channel.pipeline().remove(player.getName());
             return null;
@@ -72,7 +72,7 @@ public class PacketManager implements Listener {
 
         };
 
-        ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().b.a.m.pipeline();
+        ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().connection.connection.channel.pipeline();
         pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
     }
 

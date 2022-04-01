@@ -11,6 +11,7 @@ import com.gmail.creepycucumber1.hungerprotection.items.ClaimInspectionTool;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
 import com.gmail.creepycucumber1.hungerprotection.items.GUIManager;
 import com.gmail.creepycucumber1.hungerprotection.runnable.GeneralMonitor;
+import com.gmail.creepycucumber1.hungerprotection.runnable.Teleport;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import net.ess3.api.IEssentials;
 import net.milkbowl.vault.economy.Economy;
@@ -39,6 +40,7 @@ public final class HungerProtection extends JavaPlugin {
     private ClaimManager claimManager;
     private PlayerManager playerManager;
     private GUIManager guiManager;
+    private Teleport teleport;
 
     public static HungerProtection plugin;
 
@@ -56,6 +58,7 @@ public final class HungerProtection extends JavaPlugin {
         claimManager = new ClaimManager(this);
         playerManager = new PlayerManager(this);
         guiManager = new GUIManager(this);
+        teleport = new Teleport(this);
 
         commands = new ArrayList<>(registerCommands());
 
@@ -124,6 +127,7 @@ public final class HungerProtection extends JavaPlugin {
         commands.add(new TrustCommand(this));
         commands.add(new UntrustCommand(this));
         commands.add(new ReloadClaimsCommand(this));
+        commands.add(new PwarpCommand(this));
 
         return commands;
     }
@@ -148,6 +152,9 @@ public final class HungerProtection extends JavaPlugin {
     }
     public GUIManager getGuiManager() {
         return guiManager;
+    }
+    public Teleport getTeleporter() {
+        return teleport;
     }
 
 }
