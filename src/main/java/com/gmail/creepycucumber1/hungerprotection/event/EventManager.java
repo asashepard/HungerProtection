@@ -219,6 +219,7 @@ public class EventManager implements Listener {
 
     // enforce claim rules
 
+    @EventHandler
     //break a block
     public void onBlockBreak(BlockBreakEvent e) {
 
@@ -455,7 +456,7 @@ public class EventManager implements Listener {
     public void onEntityExplode(EntityExplodeEvent e) {
         e.blockList().removeIf(b -> !plugin.cm().getExplosions(
                 b.getLocation()
-        ));
+        ) && !b.getType().equals(Material.TNT));
     }
 
     @EventHandler
@@ -463,7 +464,7 @@ public class EventManager implements Listener {
     public void onExplosion(BlockExplodeEvent e) {
         e.blockList().removeIf(b -> !plugin.cm().getExplosions(
                 b.getLocation()
-        ));
+        ) && !b.getType().equals(Material.TNT));
     }
 
     @EventHandler
