@@ -52,6 +52,12 @@ public class TrustCommand extends CommandBase {
             return true;
         }
 
+        if(args[0].equalsIgnoreCase("public")) {
+            plugin.cm().setPublic(2, claimID);
+            player.sendMessage(TextUtil.convertColor("&aSuccessfully trusted the public in this claim."));
+            return true;
+        }
+
         PlayerManager pm = plugin.getPlayerManager();
         ArrayList<String> names = new ArrayList<>();
         for(OfflinePlayer p : pm.getPlayers()) names.add(p.getName());

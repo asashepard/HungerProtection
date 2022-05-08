@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class BuyClaimBlocksCommand extends CommandBase {
     public BuyClaimBlocksCommand(HungerProtection plugin) {
-        super(plugin, "buyclaimblocks", "Buy claim blocks", "");
+        super(plugin, "buyclaimblocks", "Buy claim blocks", "", "bcb");
     }
 
     @Override

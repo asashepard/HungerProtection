@@ -25,6 +25,7 @@ com\gmail\creepycucumber1\hungerprotection\data\DataManager.class
 com\gmail\creepycucumber1\hungerprotection\runnable\GeneralMonitor.class
 com\gmail\creepycucumber1\hungerprotection\items\ClaimsGUI.class
 com\gmail\creepycucumber1\hungerprotection\command\CommandBase.class
+com\gmail\creepycucumber1\hungerprotection\runnable\Teleport$2.class
 com\gmail\creepycucumber1\hungerprotection\util\TextUtil.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimTopCommand.class
 com\gmail\creepycucumber1\hungerprotection\claim\PlayerManager.class

@@ -215,6 +215,11 @@ public class EventManager implements Listener {
                 e.setCancelled(true);
             }
         }
+        else if(e.getMessage().toLowerCase().contains("warp") || e.getMessage().toLowerCase().contains("tp") ||
+                e.getMessage().toLowerCase().contains("home")) {
+            //extra layer of malicious claim prevention
+            plugin.getPlayerManager().resetCurrentClaimingData(e.getPlayer());
+        }
     }
 
     // enforce claim rules

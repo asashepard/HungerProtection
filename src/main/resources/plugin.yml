@@ -15,6 +15,8 @@ commands:
       - at
   buyclaimblocks:
     description: Buy claim blocks
+    aliases:
+      - bcb
   claim:
     description: Instantly claim a 5x5 plot of land
   claimexplosions:

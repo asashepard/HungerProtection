@@ -74,6 +74,7 @@ public class ClaimManager {
         map.put("buildTrusted", buildTrusted);
         map.put("containerTrusted", containerTrusted);
         map.put("accessTrusted", accessTrusted);
+        map.put("public", 5);
         map.put("subdivisions", subdivisions);
         map.put("explosions", false);
 
@@ -214,6 +215,12 @@ public class ClaimManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void setPublic(int toSet, String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        cfg.set("public", toSet);
+        plugin.getDataManager().saveConfig();
+    }
+
     public void setOwner(OfflinePlayer player, String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         cfg.set("owner", player.getUniqueId().toString());
@@ -312,6 +319,11 @@ public class ClaimManager {
         return access;
     }
 
+    public int getPublic(String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        return cfg.getInt("public");
+    }
+
     public boolean getHasPermission(OfflinePlayer p, String claimID, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
         if(p.isOp()) return true; //player is operator
         if(claimID.equalsIgnoreCase("none")) return true; //no claim in the location
@@ -322,6 +334,8 @@ public class ClaimManager {
         else if(getBuilders(claimID).contains(p)) level = 2; //has build permission
         else if(getContainer(claimID).contains(p)) level = 3; //has container permission
         else if(getAccess(claimID).contains(p)) level = 4; //has access permission
+
+        level = Math.min(level, getPublic(claimID));
 
         return level <= requiredLevel;
     }

@@ -51,6 +51,7 @@ public final class HungerProtection extends JavaPlugin {
         GeneralMonitor generalMonitor = new GeneralMonitor(this);
         generalMonitor.monitorPlayers();
         generalMonitor.monitorPlayerHand();
+        generalMonitor.monitorOften();
 
         packetManager = new PacketManager(this);
 
