@@ -22,17 +22,18 @@ public class ClaimTopCommand extends CommandBase {
             return true;
         }
 
-        HashMap<Integer, String> map = new HashMap<>(); //blocks, player name
-        int area;
+        HashMap<Double, String> map = new HashMap<>(); //blocks, player name
+        double area;
         for(OfflinePlayer p : plugin.getPlayerManager().getPlayers()) {
-            area = 0;
+            area = 0.0;
             for(String claimID : plugin.cm().getClaims(p)) {
                 BoundingBox box = plugin.cm().getBoundingBox(claimID);
                 area += (int) box.getWidthX() * (int) box.getWidthZ();
             }
+            while(map.containsKey(area)) area += Math.random(); //avoid overwriting
             map.put(area, p.getName());
         }
-        ArrayList<Integer> list = new ArrayList<>(map.keySet());
+        ArrayList<Double> list = new ArrayList<>(map.keySet());
         Collections.sort(list);
         Collections.reverse(list);
 
@@ -53,7 +54,7 @@ public class ClaimTopCommand extends CommandBase {
                 "&7(page " + page + " of " + (((list.size() - 1) / 10) + 1) + ")\n"));
         for(int i = index; i < index + 10; i++) {
             if(i > list.size() - 1) return true;
-            player.sendMessage(TextUtil.convertColor("&a" + (i + 1) + ". &7" + map.get(list.get(i)) + "&8 - &f" + list.get(i) + " blocks"));
+            player.sendMessage(TextUtil.convertColor("&a" + (i + 1) + ". &7" + map.get(list.get(i)) + "&8 - &f" + (int) Math.floor(list.get(i)) + " blocks"));
         }
 
         return true;

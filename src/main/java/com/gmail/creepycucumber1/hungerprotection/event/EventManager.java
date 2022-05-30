@@ -15,9 +15,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -485,10 +483,9 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
-    //projectile hit
-    public void onProjectileHit(ProjectileCollideEvent e) {
+    //projectile collide
+    public void onProjectileCollide(ProjectileCollideEvent e) {
         if(!(e.getEntity().getShooter() instanceof Player player)) return;
-        if(e.getEntity() instanceof EnderPearl) return;
 
         if(!(e.getCollidedWith() instanceof AbstractHorse || e.getCollidedWith() instanceof Cat ||
                 e.getCollidedWith() instanceof Parrot || e.getCollidedWith() instanceof ChestedHorse ||
@@ -517,6 +514,38 @@ public class EventManager implements Listener {
 
         if((e.getCollidedWith() instanceof Hanging || e.getCollidedWith() instanceof EnderCrystal)
                 && e.getCollidedWith().isVisualFire()) e.getCollidedWith().setVisualFire(false);
+    }
+
+    @EventHandler
+    //ender pearl
+    public void onProjectileHit(ProjectileHitEvent e) {
+        if(e.getEntity() instanceof EnderPearl) {
+            if(!(e.getEntity().getShooter() instanceof Player p)) return;
+            if(plugin.cm().getClaim(e.getEntity().getLocation()).equals("none")) return;
+            String claimID = plugin.cm().getClaim(e.getEntity().getLocation());
+
+            if(plugin.cm().getHasPermission(p, claimID, 2)) return;
+
+            OfflinePlayer owner = plugin.cm().getOwner(claimID);
+            if(!owner.isOnline() || plugin.getEssentials().getUser(owner.getUniqueId()).isAfk()) return;
+
+            for(Player player : e.getEntity().getLocation().getNearbyPlayers(20.0)) {
+                if(owner.equals(player)) e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    //splash potion
+    public void onSplashPotion(PotionSplashEvent e) {
+        e.getAffectedEntities().removeIf(entity ->
+                e.getEntity().getShooter() instanceof Player &&
+                        (entity instanceof AbstractHorse || entity instanceof Cat ||
+                        entity instanceof Parrot || entity instanceof ArmorStand ||
+                        entity instanceof AbstractVillager || entity instanceof EnderCrystal) &&
+                        !plugin.cm().getClaim(entity.getLocation()).equals("none") &&
+                        !plugin.cm().getHasPermission((Player) e.getEntity().getShooter(), plugin.cm().getClaim(entity.getLocation()), 2)
+        );
     }
 
     @EventHandler

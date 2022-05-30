@@ -25,7 +25,7 @@ public class ClaimGUI extends GUI {
         ItemStack claim = new ItemStack(material);
         ItemMeta claimMeta = claim.getItemMeta();
         claimMeta.setDisplayName(TextUtil.convertColor("&2This Claim"));
-        ArrayList<String> lore = new ArrayList<>(Arrays.asList(plugin.cm().toString(player, claimID).split("\n")));
+        ArrayList<String> lore = new ArrayList<>(Arrays.asList(plugin.cm().toString(player, claimID, false).split("\n")));
         lore.remove(1);
         claimMeta.setLore(lore);
         claim.setItemMeta(claimMeta);

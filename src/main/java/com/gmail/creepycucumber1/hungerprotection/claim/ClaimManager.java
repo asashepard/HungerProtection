@@ -112,8 +112,14 @@ public class ClaimManager {
         for(String key : cfg.getKeys(false)) {
             if(!getWorld(key).equals(world)) continue;
             if(key.equalsIgnoreCase(exempt)) continue;
-            if(box.overlaps((BoundingBox) cfg.get(key + ".boundingBox"))) {
-                BoundingBox otherBox = (BoundingBox) cfg.get(key + ".boundingBox");
+            BoundingBox otherBox;
+            try {
+                otherBox = (BoundingBox) cfg.get(key + ".boundingBox");
+            } catch (Exception e) { //most likely fresh, empty file
+                continue;
+            }
+            if(otherBox == null) continue;
+            if(box.overlaps(otherBox)) {
                 int x1 = (int) otherBox.getMinX();
                 int z1 = (int) otherBox.getMinZ();
                 int x2 = (int) otherBox.getMaxX();
@@ -247,8 +253,12 @@ public class ClaimManager {
     public String getClaim(Location location) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims");
         for(String key : cfg.getKeys(false)) {
-            if(((BoundingBox) cfg.get(key + ".boundingBox")).contains(location.toVector()) && getWorld(key).equals(location.getWorld())) {
-                return key;
+            try {
+                if(((BoundingBox) cfg.get(key + ".boundingBox")).contains(location.toVector()) && getWorld(key).equals(location.getWorld())) {
+                    return key;
+                }
+            } catch (Exception e) { // most likely fresh, empty data file
+                break;
             }
         }
         return "none";
@@ -342,7 +352,11 @@ public class ClaimManager {
 
     public World getWorld(String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
-        return Bukkit.getWorld(cfg.getString("worldName"));
+        World world = Bukkit.getWorld("world"); //default
+        try {
+            world = Bukkit.getWorld(cfg.getString("worldName"));
+        } catch (Exception ignored) {} //most likely fresh, empty file
+        return world;
     }
 
     public boolean getExplosions(String claimID) {
@@ -389,10 +403,33 @@ public class ClaimManager {
     }
 
     //print
-    public String toString(Player player, String claimID) {
+    public String toString(Player player, String claimID, boolean subdivisions) {
         StringBuilder result = new StringBuilder();
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         boolean owner = getOwner(claimID).equals(player);
+
+        if(subdivisions) {
+            if(getSubdivisions(claimID).size() == 0) {
+                result.append("This claim has no subdivisions");
+            }
+            else {
+                int i = 1;
+                for(Subdivision s : getSubdivisions(claimID)) {
+                    BoundingBox sBox = s.getBoundingBox();
+                    int x1 = (int) sBox.getMaxX();
+                    int z1 = (int) sBox.getMaxZ();
+                    int x2 = (int) sBox.getMinX();
+                    int z2 = (int) sBox.getMinZ();
+                    int size = (int) sBox.getWidthX() * (int) sBox.getWidthZ();
+                    result.append(TextUtil.convertColor("Subdivision #" + i++ + " from (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
+                    result.append(TextUtil.convertColor("&7Area: " + size + "\n"));
+                    if(!owner) continue;
+                    result.append(TextUtil.convertColor("&7Private: " + (s.getIsPrivate() ? "&2" : "&e") + s.getIsPrivate()));
+                }
+            }
+            return result.toString();
+        }
+
         BoundingBox box = (BoundingBox) cfg.get("boundingBox");
         int x1 = (int) box.getMaxX();
         int z1 = (int) box.getMaxZ();
@@ -406,12 +443,20 @@ public class ClaimManager {
         if(!owner) return result.toString();
 
         //trusted, container trusted, access trusted
-        result.append(TextUtil.convertColor("\n&9Trusted: "));
+        int pubLevel = getPublic(claimID);
+
+        result.append(TextUtil.convertColor("\n&9Trusted: &r"));
+        if(pubLevel == 2) result.append(TextUtil.convertColor("&lpublic &r"));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
-        result.append(TextUtil.convertColor("\n&dContainer-trusted: "));
+
+        result.append(TextUtil.convertColor("\n&dContainer-trusted: &r"));
+        if(pubLevel == 3) result.append(TextUtil.convertColor("&lpublic &r"));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
-        result.append(TextUtil.convertColor("\n&eAccess-trusted: "));
+
+        result.append(TextUtil.convertColor("\n&eAccess-trusted: &r"));
+        if(pubLevel == 4) result.append(TextUtil.convertColor("&lpublic &r"));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
+
         return result.toString();
     }
 

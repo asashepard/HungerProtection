@@ -53,9 +53,10 @@ public class UntrustCommand extends CommandBase {
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("public")) {
+        if(args[0].equalsIgnoreCase("public") || args[0].equalsIgnoreCase("p")) {
             plugin.cm().setPublic(5, claimID);
-            player.sendMessage(TextUtil.convertColor("&aSuccessfully un-trusted the public in this claim."));
+            player.sendMessage(TextUtil.convertColor("&aSuccessfully un-trusted the public in this claim. " +
+                    "All individual permissions still remain."));
             return true;
         }
 

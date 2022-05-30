@@ -31,6 +31,7 @@ com\gmail\creepycucumber1\hungerprotection\command\ClaimTopCommand.class
 com\gmail\creepycucumber1\hungerprotection\claim\PlayerManager.class
 com\gmail\creepycucumber1\hungerprotection\command\ContainerTrustCommand.class
 com\gmail\creepycucumber1\hungerprotection\items\GUIItem.class
+com\gmail\creepycucumber1\hungerprotection\runnable\GeneralMonitor$3.class
 com\gmail\creepycucumber1\hungerprotection\command\AccessTrustCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\ClaimsCommand.class
 com\gmail\creepycucumber1\hungerprotection\command\TransferClaimCommand.class

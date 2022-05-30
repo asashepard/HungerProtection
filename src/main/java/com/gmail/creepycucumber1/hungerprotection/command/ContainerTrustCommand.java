@@ -38,7 +38,7 @@ public class ContainerTrustCommand extends CommandBase {
             return true;
         }
 
-        if(args[0].equalsIgnoreCase("public")) {
+        if(args[0].equalsIgnoreCase("public") || args[0].equalsIgnoreCase("p")) {
             plugin.cm().setPublic(3, claimID);
             player.sendMessage(TextUtil.convertColor("&aSuccessfully container-trusted the public in this claim."));
             return true;

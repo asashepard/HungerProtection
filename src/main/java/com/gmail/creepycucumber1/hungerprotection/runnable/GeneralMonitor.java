@@ -4,9 +4,6 @@ import com.gmail.creepycucumber1.hungerprotection.HungerProtection;
 import com.gmail.creepycucumber1.hungerprotection.event.PacketManager;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 public class GeneralMonitor {
 
@@ -24,16 +21,16 @@ public class GeneralMonitor {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if(plugin.getPlayerManager().getAccruedBlocks(player) < MAX_ACCRUE) {
-                        int amount = 50;
+                        int amount = 5;
                         if(plugin.getEssentials().getUser(player).isAfk())
-                            amount = 10;
+                            amount = 1;
                         plugin.getPlayerManager().addAccruedBlocks(player, amount);
                         plugin.getPlayerManager().addClaimBlocks(player, amount);
                     }
                 });
             }
 
-        }, 0, 36000); //10 minutes
+        }, 0, 3600); //1 minute
     }
 
     public void monitorPlayerHand() {
