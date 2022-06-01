@@ -25,7 +25,7 @@ public class Teleport {
         healthValues.add(player.getHealth());
         Location telePos = new Location(world, x, y, z);
 
-        player.sendMessage(TextUtil.convertColor("&aTeleportation will begin in 5 seconds..."));
+        player.sendMessage(TextUtil.convertColor("&3&lSERVER &8» &7Teleportation will commence in &c5 seconds&7. Don't move."));
 
         for(int i = 10; i < 100; i += 10) {
             Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
@@ -49,8 +49,9 @@ public class Teleport {
                     }
 
                 if(endPos.distance(startPos) > 2 || tookDamage)
-                    player.sendMessage(TextUtil.convertColor("&cYou moved or took damage! Teleportation has been canceled."));
+                    player.sendMessage(TextUtil.convertColor("&3&lSERVER &8» &4Pending teleportation request cancelled."));
                 else {
+                    player.sendMessage(TextUtil.convertColor("&3&lSERVER &8» &7Teleportation commencing..."));
                     plugin.getEssentials().getUser(player.getUniqueId()).setLastLocation(endPos);
                     player.teleport(telePos);
                 }

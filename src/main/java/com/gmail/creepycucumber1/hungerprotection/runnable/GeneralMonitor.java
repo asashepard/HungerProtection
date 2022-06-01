@@ -41,7 +41,7 @@ public class GeneralMonitor {
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if(player.getInventory().getItemInMainHand().equals(ClaimTool.claimTool)) {
                         String claimID = plugin.cm().getClaim(player.getLocation());
-                        if(!claimID.equalsIgnoreCase("none") && plugin.cm().getOwner(claimID).getPlayer().equals(player))
+                        if(!claimID.equalsIgnoreCase("none") && plugin.cm().getOwner(claimID).equals(player))
                             PacketManager.highlightClaim(player, claimID, false);
                     }
                     else {
