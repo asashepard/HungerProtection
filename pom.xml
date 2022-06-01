@@ -19,6 +19,7 @@
     </properties>
 
     <build>
+        <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>net.md-5</groupId>
