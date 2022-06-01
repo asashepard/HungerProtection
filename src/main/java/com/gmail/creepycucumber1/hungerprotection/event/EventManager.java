@@ -549,6 +549,26 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
+    //hunger loss
+    public void onHungerEvent(FoodLevelChangeEvent e) {
+        if(!(e.getEntity() instanceof Player)) return;
+        if(plugin.cm().getClaim(e.getEntity().getLocation()).equals("none")) return;
+
+        String claimID = plugin.cm().getClaim(e.getEntity().getLocation());
+        if(plugin.cm().getIsAdmin(claimID)) e.setCancelled(true);
+    }
+
+    @EventHandler
+    //mob spawn (in admin claim)
+    public void onSpawnEvent(EntitySpawnEvent e) {
+        if(e.getEntity() instanceof Player) return;
+        if(plugin.cm().getClaim(e.getLocation()).equals("none")) return;
+
+        String claimID = plugin.cm().getClaim(e.getEntity().getLocation());
+        if(plugin.cm().getIsAdmin(claimID)) e.setCancelled(true);
+    }
+
+    @EventHandler
     //liquid flows across claim border
     public void onLiquidFlow(BlockFromToEvent e) {
         if(e.getBlock().getWorld().toString().toLowerCase().contains("nether")) return;
