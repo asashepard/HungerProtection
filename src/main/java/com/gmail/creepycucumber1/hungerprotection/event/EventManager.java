@@ -218,6 +218,12 @@ public class EventManager implements Listener {
             //extra layer of malicious claim prevention
             plugin.getPlayerManager().resetCurrentClaimingData(e.getPlayer());
         }
+        else if(e.getMessage().toLowerCase().contains("suicide")) {
+            if(plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getPlayer().getLocation()))) {
+                e.getPlayer().sendMessage(TextUtil.convertColor("&cNo suicide in the admin claim!"));
+                e.setCancelled(true);
+            }
+        }
     }
 
     // enforce claim rules
