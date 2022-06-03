@@ -451,11 +451,11 @@ public class ClaimManager {
 
         result.append(TextUtil.convertColor("\n&dContainer-trusted: &r"));
         if(pubLevel == 3) result.append(TextUtil.convertColor("&lpublic &r"));
-        for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
+        for(OfflinePlayer p : getContainer(claimID)) result.append(p.getName()).append(" ");
 
         result.append(TextUtil.convertColor("\n&eAccess-trusted: &r"));
         if(pubLevel == 4) result.append(TextUtil.convertColor("&lpublic &r"));
-        for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
+        for(OfflinePlayer p : getAccess(claimID)) result.append(p.getName()).append(" ");
 
         return result.toString();
     }

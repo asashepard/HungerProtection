@@ -567,7 +567,7 @@ public class EventManager implements Listener {
     @EventHandler
     //mob spawn (in admin claim)
     public void onSpawnEvent(EntitySpawnEvent e) {
-        if(e.getEntity() instanceof Player) return;
+        if(!(e.getEntity() instanceof Monster)) return;
         if(plugin.cm().getClaim(e.getLocation()).equals("none")) return;
 
         String claimID = plugin.cm().getClaim(e.getEntity().getLocation());

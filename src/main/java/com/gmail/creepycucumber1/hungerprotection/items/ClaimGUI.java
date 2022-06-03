@@ -19,8 +19,9 @@ public class ClaimGUI extends GUI {
         this.player = player;
 
         Material material = Material.GRASS_BLOCK;
-        if(plugin.cm().getWorld(claimID).getName().toLowerCase().contains("nether")) material = Material.NETHERRACK;
-        if(plugin.cm().getWorld(claimID).getName().toLowerCase().contains("end")) material = Material.END_STONE;
+        String worldName = plugin.cm().getWorld(claimID).getName().toLowerCase();
+        if(worldName.contains("nether")) material = Material.NETHERRACK;
+        if(worldName.contains("end")) material = Material.END_STONE;
 
         ItemStack claim = new ItemStack(material);
         ItemMeta claimMeta = claim.getItemMeta();
@@ -58,7 +59,7 @@ public class ClaimGUI extends GUI {
         if(item.getItem().getType().equals(Material.RED_WOOL)) {
             p.closeInventory();
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "abandonclaim " + item.getItemId());
-            p.sendMessage(TextUtil.convertColor("&aClaim successfully removed. You now have &f" +
+            p.sendMessage(TextUtil.convertColor("&aClaim successfully removed. You now have &2" +
                     plugin.getPlayerManager().getClaimBlocks(p) + " &aclaim blocks remaining."));
         }
         else if(item.getItem().getType().equals(Material.PLAYER_HEAD)) {
