@@ -18,6 +18,7 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -42,9 +43,19 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        plugin.getGuiManager().onLeave(e.getPlayer());
+    }
+
+    @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         boolean res = plugin.getGuiManager().onClick(Bukkit.getPlayer(e.getWhoClicked().getUniqueId()), e.getCurrentItem(), e.getView());
         if(res) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e){
+        plugin.getGuiManager().onClose(Bukkit.getPlayer(e.getPlayer().getUniqueId()), e.getView());
     }
 
     @EventHandler
@@ -296,10 +307,10 @@ public class EventManager implements Listener {
 
         List<Material> universal = List.of(Material.CRAFTING_TABLE, Material.LOOM, Material.LODESTONE,
                 Material.CARTOGRAPHY_TABLE, Material.ENCHANTING_TABLE, Material.STONECUTTER,
-                Material.GRINDSTONE);
+                Material.GRINDSTONE, Material.LECTERN);
         List<Material> containers = List.of(Material.CHEST, Material.BARREL, Material.DROPPER,
                 Material.HOPPER, Material.FURNACE, Material.SMOKER, Material.BLAST_FURNACE, Material.BEEHIVE,
-                Material.JUKEBOX, Material.LECTERN, Material.SHULKER_BOX, Material.DISPENSER, Material.BREWING_STAND);
+                Material.JUKEBOX, Material.SHULKER_BOX, Material.DISPENSER, Material.BREWING_STAND);
         List<Material> structures = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
                 Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
                 Material.RESPAWN_ANCHOR, Material.REDSTONE_WIRE, Material.REPEATER, Material.COMPARATOR);
@@ -328,6 +339,18 @@ public class EventManager implements Listener {
                 level)) {
             if(!(level == 4 && !e.getClickedBlock().getType().isInteractable()) || Tag.STAIRS.isTagged(e.getClickedBlock().getType()))
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    //dedicated lectern suppressor
+    public void onLecternTakeBook(PlayerTakeLecternBookEvent e) {
+        if(!plugin.cm().getHasPermission(
+                e.getPlayer(),
+                plugin.cm().getClaim(e.getLectern().getLocation()),
+                3)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(3));
             e.setCancelled(true);
         }
     }
