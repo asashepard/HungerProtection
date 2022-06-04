@@ -438,7 +438,7 @@ public class ClaimManager {
         int size = (int) box.getWidthX() * (int) box.getWidthZ();
 
         result.append(TextUtil.convertColor("&2&lClaim at (" + x1 + ", " + z1 + ") -> (" + x2 + ", " + z2 + ")\n"));
-        result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m &8| &7Created: " + getCreated(claimID)));
+        result.append(TextUtil.convertColor("&7Owner: &f" + getOwner(claimID).getName() + "\nArea: " + size + "m² &8| &7Created: " + getCreated(claimID)));
 
         if(!owner) return result.toString();
 

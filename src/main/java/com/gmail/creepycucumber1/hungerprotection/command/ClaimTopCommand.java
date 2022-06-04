@@ -27,6 +27,7 @@ public class ClaimTopCommand extends CommandBase {
         for(OfflinePlayer p : plugin.getPlayerManager().getPlayers()) {
             area = 0.0;
             for(String claimID : plugin.cm().getClaims(p)) {
+                if(plugin.cm().getIsAdmin(claimID)) continue;
                 BoundingBox box = plugin.cm().getBoundingBox(claimID);
                 area += (int) box.getWidthX() * (int) box.getWidthZ();
             }

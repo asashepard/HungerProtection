@@ -22,8 +22,8 @@ public class ClaimToolsCommand extends CommandBase {
             sender.sendMessage(TextUtil.convertColor("&cYou must be a player to use this command!"));
             return true;
         }
-        if(Math.abs(plugin.getPlayerManager().getLastTools(player) - Instant.now().toEpochMilli()) < 300000) {
-            player.sendMessage(TextUtil.convertColor("&7Easy there, there's a five minute cooldown for those!"));
+        if(Math.abs(plugin.getPlayerManager().getLastTools(player) - Instant.now().toEpochMilli()) < 60000) {
+            player.sendMessage(TextUtil.convertColor("&7Easy there, there's a one minute cooldown for those!"));
             return true;
         }
 
