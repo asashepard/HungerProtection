@@ -88,9 +88,10 @@ public class PwarpGUI extends GUI {
 
     private ItemStack getSkull(String uuid) {
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1);
+        OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
-        skullMeta.setDisplayName(TextUtil.convertColor("&a" + Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName()));
+        skullMeta.setOwningPlayer(skullOwner);
+        skullMeta.setDisplayName(TextUtil.convertColor("&a" + skullOwner.getName()));
         skull.setItemMeta(skullMeta);
         return skull;
     }
