@@ -299,8 +299,7 @@ public class EventManager implements Listener {
                 !(e.getClickedBlock().getType().isInteractable() && !e.getPlayer().isSneaking())) return;
 
         //exceptions
-        if(e.getClickedBlock().getType().toString().toLowerCase().contains("door") &&
-                !e.getClickedBlock().getType().toString().toLowerCase().contains("trap")) return;
+        if(Tag.DOORS.isTagged(e.getClickedBlock().getType())) return;
 
         if(Tag.BUTTONS.isTagged(e.getClickedBlock().getType()) &&
                 plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getClickedBlock().getLocation()))) return;
@@ -337,7 +336,7 @@ public class EventManager implements Listener {
                 e.getPlayer(),
                 plugin.cm().getClaim(e.getClickedBlock().getLocation()),
                 level)) {
-            if(!(level == 4 && !e.getClickedBlock().getType().isInteractable()) || Tag.STAIRS.isTagged(e.getClickedBlock().getType()))
+            if((level != 4 || e.getClickedBlock().getType().isInteractable()) || Tag.STAIRS.isTagged(e.getClickedBlock().getType())) //send message
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
             e.setCancelled(true);
         }
@@ -368,6 +367,18 @@ public class EventManager implements Listener {
                 e.setCancelled(true);
                 return;
             }
+        }
+    }
+
+    @EventHandler
+    //dedicated bucket suppressor
+    public void onBucketEmpty(PlayerBucketEmptyEvent e) {
+        if(!plugin.cm().getHasPermission(
+                e.getPlayer(),
+                plugin.cm().getClaim(e.getBlock().getLocation()),
+                2)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+            e.setCancelled(true);
         }
     }
 
@@ -486,9 +497,21 @@ public class EventManager implements Listener {
     @EventHandler
     //explosion destroys blocks
     public void onEntityExplode(EntityExplodeEvent e) {
+        if(e.getEntity() instanceof Creeper) {
+            e.blockList().clear();
+            return;
+        }
         e.blockList().removeIf(b -> !plugin.cm().getExplosions(
                 b.getLocation()
         ) && !b.getType().equals(Material.TNT));
+    }
+
+    @EventHandler
+    //enderman picks up block - NOT CLAIM-SPECIFIC
+    public void onChangeBlock(EntityChangeBlockEvent e) {
+        if(e.getEntity() instanceof Enderman) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -584,6 +607,15 @@ public class EventManager implements Listener {
         if(plugin.cm().getClaim(e.getEntity().getLocation()).equals("none")) return;
 
         String claimID = plugin.cm().getClaim(e.getEntity().getLocation());
+        if(plugin.cm().getIsAdmin(claimID)) e.setCancelled(true);
+    }
+
+    @EventHandler
+    //hunger loss
+    public void onEatFood(PlayerItemConsumeEvent e) {
+        if(plugin.cm().getClaim(e.getPlayer().getLocation()).equals("none")) return;
+
+        String claimID = plugin.cm().getClaim(e.getPlayer().getLocation());
         if(plugin.cm().getIsAdmin(claimID)) e.setCancelled(true);
     }
 
