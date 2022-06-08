@@ -61,7 +61,7 @@ public class GeneralMonitor {
             public void run() { //extra layer of end island claim prevention
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     if(player.getWorld().equals(Bukkit.getWorld("world_the_end"))) {
-                        if(Math.abs(player.getLocation().getX()) < 155 ||
+                        if(Math.abs(player.getLocation().getX()) < 155 &&
                                 Math.abs(player.getLocation().getZ()) < 155) {
                             plugin.getPlayerManager().resetCurrentClaimingData(player);
                         }
@@ -69,6 +69,6 @@ public class GeneralMonitor {
                 });
             }
 
-        }, 0, 5); //0.5 seconds
+        }, 0, 30); //1.5 seconds
     }
 }

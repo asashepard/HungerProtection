@@ -227,6 +227,12 @@ public class ClaimManager {
         plugin.getDataManager().saveConfig();
     }
 
+    public void setClan(String clanName, String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        cfg.set("clan", clanName);
+        plugin.getDataManager().saveConfig();
+    }
+
     public void setOwner(OfflinePlayer player, String claimID) {
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         cfg.set("owner", player.getUniqueId().toString());
@@ -334,6 +340,11 @@ public class ClaimManager {
         return cfg.getInt("public");
     }
 
+    public String getClan(String claimID) {
+        ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
+        return cfg.getString("clan");
+    }
+
     public boolean getHasPermission(OfflinePlayer p, String claimID, int requiredLevel) { // 1 = owner/all, 2 = build, 3 = container, 4 = access, 5 = none
         if(p.isOp()) return true; //player is operator
         if(claimID.equalsIgnoreCase("none")) return true; //no claim in the location
@@ -346,6 +357,7 @@ public class ClaimManager {
         else if(getAccess(claimID).contains(p)) level = 4; //has access permission
 
         level = Math.min(level, getPublic(claimID));
+        if(p.isOnline() && ((Player) p).hasPermission("hungerclans.clan." + getClan(claimID))) level = 2;
 
         return level <= requiredLevel;
     }
@@ -444,9 +456,11 @@ public class ClaimManager {
 
         //trusted, container trusted, access trusted
         int pubLevel = getPublic(claimID);
+        String clan = getClan(claimID);
 
         result.append(TextUtil.convertColor("\n&9Trusted: &r"));
         if(pubLevel == 2) result.append(TextUtil.convertColor("&lpublic &r"));
+        if(clan != null && !clan.equalsIgnoreCase("none")) result.append(TextUtil.convertColor("&l" + clan + " &r"));
         for(OfflinePlayer p : getBuilders(claimID)) result.append(p.getName()).append(" ");
 
         result.append(TextUtil.convertColor("\n&dContainer-trusted: &r"));

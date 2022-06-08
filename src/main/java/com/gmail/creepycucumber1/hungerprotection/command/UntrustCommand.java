@@ -59,6 +59,12 @@ public class UntrustCommand extends CommandBase {
                     "All individual permissions still remain."));
             return true;
         }
+        if(args[0].equalsIgnoreCase("clan")) {
+            plugin.cm().setClan("none", claimID);
+            player.sendMessage(TextUtil.convertColor("&aSuccessfully un-trusted your clan in this claim. " +
+                    "All individual permissions still remain."));
+            return true;
+        }
 
         PlayerManager pm = plugin.getPlayerManager();
         ArrayList<String> names = new ArrayList<>();

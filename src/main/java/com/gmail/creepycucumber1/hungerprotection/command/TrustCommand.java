@@ -57,6 +57,15 @@ public class TrustCommand extends CommandBase {
             player.sendMessage(TextUtil.convertColor("&aSuccessfully trusted the public in this claim."));
             return true;
         }
+        else if(args[0].equalsIgnoreCase("clan") || args[0].equalsIgnoreCase("c")) {
+            if(args.length != 2) {
+                player.sendMessage(TextUtil.convertColor("&cPerhaps you meant /c trust."));
+                return true;
+            }
+            plugin.cm().setClan(args[1], claimID);
+            player.sendMessage(TextUtil.convertColor("&aSuccessfully trusted your clan, " + args[1] + ", in this claim."));
+            return true;
+        }
 
         PlayerManager pm = plugin.getPlayerManager();
         ArrayList<String> names = new ArrayList<>();
