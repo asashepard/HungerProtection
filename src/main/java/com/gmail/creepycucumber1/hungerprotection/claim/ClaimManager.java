@@ -402,8 +402,16 @@ public class ClaimManager {
         return list;
     }
 
+    /**
+     * @deprecated Use {@link #isPrivatized(Location, String)}
+     */
+    @Deprecated
     public boolean isPrivatized(Location loc) {
-        String claimID = getClaim(loc);
+        return isPrivatized(loc, getClaim(loc));
+
+    }
+
+    public boolean isPrivatized(Location loc, String claimID) {
         if(claimID.equalsIgnoreCase("none")) return false;
         ConfigurationSection cfg = plugin.getDataManager().getConfig().getConfigurationSection("claims." + claimID);
         boolean prvt = false;

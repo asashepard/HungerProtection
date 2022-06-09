@@ -7,6 +7,7 @@ import com.gmail.creepycucumber1.hungerprotection.claim.Subdivision;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimInspectionTool;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
+import jline.internal.Nullable;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -298,9 +299,13 @@ public class EventManager implements Listener {
     private static final List<Material> STRUCTURES = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
             Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
             Material.RESPAWN_ANCHOR, Material.REDSTONE_WIRE, Material.REPEATER, Material.COMPARATOR);
+
+    private String claim = null;
     @EventHandler
     //left or right-click a block
     public void onPlayerInteract(PlayerInteractEvent e) {
+        claim = null;
+        
         if(e.getClickedBlock() == null) return;
         if(e.getAction().isLeftClick()) return;
 
@@ -312,14 +317,14 @@ public class EventManager implements Listener {
         if(Tag.DOORS.isTagged(e.getClickedBlock().getType())) return;
 
         if(Tag.BUTTONS.isTagged(e.getClickedBlock().getType()) &&
-                plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getClickedBlock().getLocation()))) return;
+                plugin.cm().getIsAdmin(getClaim(e))) return;
 
 
         //private
-        if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
+        if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation(), getClaim(e))) {
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
-                    plugin.cm().getClaim(e.getClickedBlock().getLocation()),
+                    getClaim(e),
                     1) && !UNIVERSAL.contains(e.getClickedBlock().getType())) {
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
                 e.setCancelled(true);
@@ -335,12 +340,26 @@ public class EventManager implements Listener {
 
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
-                plugin.cm().getClaim(e.getClickedBlock().getLocation()),
+                getClaim(e),
                 level)) {
             if((level != 4 || e.getClickedBlock().getType().isInteractable()) || Tag.STAIRS.isTagged(e.getClickedBlock().getType())) //send message
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
             e.setCancelled(true);
         }
+    }
+    // Below are helper functions to prevent repetitive calls to ClaimManager#getClaim (temporary fix)
+    private String getClaim(Location l){
+        if(claim == null) claim = plugin.cm().getClaim(l);
+
+        return claim;
+    }
+    
+    private String getClaim(Block l){
+        return getClaim(l.getLocation());
+    }
+    
+    private String getClaim(PlayerInteractEvent e){
+        return getClaim(e.getClickedBlock().getLocation());
     }
 
     @EventHandler
