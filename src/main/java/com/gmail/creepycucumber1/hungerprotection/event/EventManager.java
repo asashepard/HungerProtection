@@ -23,6 +23,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.BoundingBox;
+import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -520,9 +521,20 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
-    //enderman picks up block - NOT CLAIM-SPECIFIC
+    //enderman picks up block or entity tramples farmland - NOT CLAIM-SPECIFIC
     public void onChangeBlock(EntityChangeBlockEvent e) {
         if(e.getEntity() instanceof Enderman) {
+            e.setCancelled(true);
+        }
+        else if(!(e.getEntity() instanceof Player) && e.getBlock().getType().equals(Material.FARMLAND)) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    //door broken by monster - NOT CLAIM-SPECIFIC
+    public void onChangeBlock(EntityBreakDoorEvent e) {
+        if(e.getEntity() instanceof Monster) {
             e.setCancelled(true);
         }
     }
@@ -624,12 +636,21 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
-    //hunger loss
+    //food eat
     public void onEatFood(PlayerItemConsumeEvent e) {
         if(plugin.cm().getClaim(e.getPlayer().getLocation()).equals("none")) return;
 
         String claimID = plugin.cm().getClaim(e.getPlayer().getLocation());
         if(plugin.cm().getIsAdmin(claimID)) e.setCancelled(true);
+        else if(e.getItem().getType().equals(Material.CHORUS_FRUIT)) {
+            if(!plugin.cm().getHasPermission(
+                    e.getPlayer(),
+                    plugin.cm().getClaim(e.getPlayer().getLocation()),
+                    2)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                e.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
@@ -749,6 +770,56 @@ public class EventManager implements Listener {
             }
         }
 
+    }
+
+    //--chairs--
+
+    @EventHandler
+    public void onPlayerSit(PlayerInteractEvent e) {
+        if (e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand().equals(EquipmentSlot.HAND) &&
+                e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR) &&
+                (Tag.STAIRS.isTagged(e.getClickedBlock().getType()) || Tag.SLABS.isTagged(e.getClickedBlock().getType()))) {
+            for(Entity entity : e.getClickedBlock().getLocation().getNearbyEntities(1.5, 1.5, 1.5)) {
+                if(entity instanceof Egg) return;
+            }
+            if (e.getPlayer().isInsideVehicle()) return;
+
+            Egg toSitOn = (Egg) e.getClickedBlock().getLocation().getWorld().spawn(
+                    e.getClickedBlock().getLocation().add(0.5, 0, 0.5), Egg.class, (settings) -> {
+                        settings.setGravity(false);
+                        settings.setInvulnerable(true);
+                    });
+            toSitOn.addPassenger(e.getPlayer());
+
+        }
+    }
+
+    @EventHandler
+    public void onEntityDismount(EntityDismountEvent e) {
+        if(e.getDismounted() instanceof Egg) {
+            e.getDismounted().remove();
+        }
+    }
+
+    @EventHandler
+    public void onPlayerTeleportOffChair(PlayerTeleportEvent e) {
+        if(e.getPlayer().getVehicle() instanceof Egg) {
+            e.getPlayer().getVehicle().remove();
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeathOnChair(PlayerDeathEvent e) {
+        if(e.getPlayer().getVehicle() instanceof Egg) {
+            e.getPlayer().getVehicle().remove();
+        }
+    }
+
+    @EventHandler
+    public void onChairBreak(BlockBreakEvent e) {
+        for(Entity entity : e.getBlock().getLocation().getNearbyEntities(1.5, 1.5, 1.5)) {
+            if(entity instanceof Egg) entity.remove();
+        }
     }
 
 }
