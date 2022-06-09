@@ -797,14 +797,14 @@ public class EventManager implements Listener {
     public void onPlayerSit(PlayerInteractEvent e) {
         if (e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand().equals(EquipmentSlot.HAND) &&
                 e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.AIR) &&
-                (Tag.STAIRS.isTagged(e.getClickedBlock().getType()) || Tag.SLABS.isTagged(e.getClickedBlock().getType()))) {
+                (Tag.STAIRS.isTagged(e.getClickedBlock().getType()))) {
             for(Entity entity : e.getClickedBlock().getLocation().getNearbyEntities(1.5, 1.5, 1.5)) {
                 if(entity instanceof Egg) return;
             }
             if (e.getPlayer().isInsideVehicle()) return;
 
             Egg toSitOn = (Egg) e.getClickedBlock().getLocation().getWorld().spawn(
-                    e.getClickedBlock().getLocation().add(0.5, 0, 0.5), Egg.class, (settings) -> {
+                    e.getClickedBlock().getLocation().add(0.5, 0.2, 0.5), Egg.class, (settings) -> {
                         settings.setGravity(false);
                         settings.setInvulnerable(true);
                     });
