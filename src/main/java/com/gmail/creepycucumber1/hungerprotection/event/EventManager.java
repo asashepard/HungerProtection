@@ -289,6 +289,15 @@ public class EventManager implements Listener {
         }
     }
 
+    private static final List<Material> UNIVERSAL = List.of(Material.CRAFTING_TABLE, Material.LOOM, Material.LODESTONE,
+            Material.CARTOGRAPHY_TABLE, Material.ENCHANTING_TABLE, Material.STONECUTTER,
+            Material.GRINDSTONE, Material.LECTERN);
+    private static final List<Material> CONTAINERS = List.of(Material.CHEST, Material.BARREL, Material.DROPPER,
+            Material.HOPPER, Material.FURNACE, Material.SMOKER, Material.BLAST_FURNACE, Material.BEEHIVE,
+            Material.JUKEBOX, Material.SHULKER_BOX, Material.DISPENSER, Material.BREWING_STAND);
+    private static final List<Material> STRUCTURES = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
+            Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
+            Material.RESPAWN_ANCHOR, Material.REDSTONE_WIRE, Material.REPEATER, Material.COMPARATOR);
     @EventHandler
     //left or right-click a block
     public void onPlayerInteract(PlayerInteractEvent e) {
@@ -305,22 +314,13 @@ public class EventManager implements Listener {
         if(Tag.BUTTONS.isTagged(e.getClickedBlock().getType()) &&
                 plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getClickedBlock().getLocation()))) return;
 
-        List<Material> universal = List.of(Material.CRAFTING_TABLE, Material.LOOM, Material.LODESTONE,
-                Material.CARTOGRAPHY_TABLE, Material.ENCHANTING_TABLE, Material.STONECUTTER,
-                Material.GRINDSTONE, Material.LECTERN);
-        List<Material> containers = List.of(Material.CHEST, Material.BARREL, Material.DROPPER,
-                Material.HOPPER, Material.FURNACE, Material.SMOKER, Material.BLAST_FURNACE, Material.BEEHIVE,
-                Material.JUKEBOX, Material.SHULKER_BOX, Material.DISPENSER, Material.BREWING_STAND);
-        List<Material> structures = List.of(Material.CANDLE, Material.CAKE, Material.FLOWER_POT,
-                Material.CAMPFIRE, Material.SOUL_CAMPFIRE, Material.CAULDRON, Material.COMPOSTER,
-                Material.RESPAWN_ANCHOR, Material.REDSTONE_WIRE, Material.REPEATER, Material.COMPARATOR);
 
         //private
         if(plugin.cm().isPrivatized(e.getClickedBlock().getLocation())) {
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(e.getClickedBlock().getLocation()),
-                    1) && !universal.contains(e.getClickedBlock().getType())) {
+                    1) && !UNIVERSAL.contains(e.getClickedBlock().getType())) {
                 TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
                 e.setCancelled(true);
                 return;
@@ -328,9 +328,9 @@ public class EventManager implements Listener {
         }
 
         int level = 4; //default
-        if(universal.contains(e.getClickedBlock().getType())) level = 5;
-        else if(containers.contains(e.getClickedBlock().getType())) level = 3;
-        else if(structures.contains(e.getClickedBlock().getType()) ||
+        if(UNIVERSAL.contains(e.getClickedBlock().getType())) level = 5;
+        else if(CONTAINERS.contains(e.getClickedBlock().getType())) level = 3;
+        else if(STRUCTURES.contains(e.getClickedBlock().getType()) ||
                 e.getClickedBlock().getType().toString().toLowerCase().contains("candle")) level = 2;
 
         if(!plugin.cm().getHasPermission(
