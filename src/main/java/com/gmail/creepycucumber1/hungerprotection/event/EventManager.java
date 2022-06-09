@@ -383,11 +383,24 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
+    //dedicated crop trample suppressor
+    public void onCropTrample(PlayerInteractEvent e) {
+        if(e.getAction().equals(Action.PHYSICAL) && e.getInteractionPoint() != null && e.getInteractionPoint().getBlock().getType().equals(Material.FARMLAND)) {
+            if(!plugin.cm().getHasPermission(
+                    e.getPlayer(),
+                    plugin.cm().getClaim(e.getInteractionPoint()),
+                    2)) {
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
     //left-click a vehicle (minecart in admin claim)
     public void onVehicleDamage(VehicleDamageEvent e) {
         if(e.getAttacker() == null || !(e.getAttacker() instanceof Player player)) return;
         if(!(e.getVehicle() instanceof Minecart)) return;
-        if(!plugin.cm().getIsAdmin(plugin.cm().getClaim(e.getVehicle().getLocation()))) return;
         if(!plugin.cm().getHasPermission(
                 player,
                 plugin.cm().getClaim(e.getVehicle().getLocation()),
