@@ -287,7 +287,7 @@ public class EventManager implements Listener {
             for (int x = ox - 5; x <= ox + 5; ++x) {
                 for (int y = oy - 5; y <= oy + 5; ++y) {
                     for (int z = oz - 5; z <= oz + 5; ++z) {
-                        Location l = new Location(x, y, z);
+                        Location l = new Location(e.getBlock().getWorld(), x, y, z);
                         Block block = e.getBlock().getWorld().getBlockAt(l);
                         if (block.getType() != type) {
                             continue;
