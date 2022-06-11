@@ -8,6 +8,7 @@ import com.gmail.creepycucumber1.hungerprotection.items.ClaimInspectionTool;
 import com.gmail.creepycucumber1.hungerprotection.items.ClaimTool;
 import com.gmail.creepycucumber1.hungerprotection.util.TextUtil;
 import jline.internal.Nullable;
+import net.coreprotect.CoreProtect;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -284,9 +285,9 @@ public class EventManager implements Listener {
                 return;
             }
 
-            for (int x = ox - 5; x <= ox + 5; ++x) {
-                for (int y = oy - 5; y <= oy + 5; ++y) {
-                    for (int z = oz - 5; z <= oz + 5; ++z) {
+            for (int x = ox - 2; x <= ox + 2; ++x) {
+                for (int y = oy - 2; y <= oy + 2; ++y) {
+                    for (int z = oz - 2; z <= oz + 2; ++z) {
                         Location l = new Location(e.getBlock().getWorld(), x, y, z);
                         Block block = e.getBlock().getWorld().getBlockAt(l);
                         if (block.getType() != type) {
@@ -295,6 +296,7 @@ public class EventManager implements Listener {
 
                         if(plugin.cm().getHasPermission(e.getPlayer(), plugin.cm().getClaim(l), 1)) {
                             block.breakNaturally(item, true);
+                            CoreProtect.getInstance().getAPI().logRemoval(e.getPlayer().getName(), l, block.getType(), block.getBlockData());
                         }
                     }
                 }
