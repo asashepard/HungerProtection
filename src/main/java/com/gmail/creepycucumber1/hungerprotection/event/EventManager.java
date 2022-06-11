@@ -14,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
@@ -23,6 +24,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
@@ -262,8 +264,44 @@ public class EventManager implements Listener {
                 2)) {
             TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
             e.setCancelled(true);
+            return;
         }
 
+        // op pickaxe
+        ItemStack item = e.getPlayer().getInventory().getItem(EquipmentSlot.HAND);
+        if(item.getItemMeta().hasLore() && item.getItemMeta().getLore().get(0).equals(TextUtil.convertColor("&aArea Destroyer"))){
+            // From WorldEdit
+            int ox = e.getBlock().getX();
+            int oy = e.getBlock().getY();
+            int oz = e.getBlock().getZ();
+            Material type = e.getBlock().getType();
+
+            if (type.isAir()) {
+                return false;
+            }
+
+            if (type == Material.BEDROCK) {
+                return false;
+            }
+
+            for (int x = ox - 5; x <= ox + 5; ++x) {
+                for (int y = oy - 5; y <= oy + 5; ++y) {
+                    for (int z = oz - 5; z <= oz + 5; ++z) {
+                        Location l = new Location(x, y, z);
+                        Block block = e.getBlock().getWorld().getBlockAt(l);
+                        if (block.getType() != type) {
+                            continue;
+                        }
+
+                        if(plugin.cm().getHasPermission(e.getPlayer(), plugin.cm().getClaim(l), 1)) {
+                            block.breakNaturally(item, true);
+                        }
+                    }
+                }
+            }
+
+            e.getBlock().breakNaturally()
+        }
     }
 
     @EventHandler
