@@ -267,43 +267,6 @@ public class EventManager implements Listener {
             e.setCancelled(true);
             return;
         }
-
-        // op pickaxe
-        ItemStack item = e.getPlayer().getInventory().getItem(EquipmentSlot.HAND);
-        if(item.getItemMeta().hasLore() && item.getItemMeta().getLore().get(0).equals(TextUtil.convertColor("&aArea Destroyer"))){
-            // From WorldEdit
-            int ox = e.getBlock().getX();
-            int oy = e.getBlock().getY();
-            int oz = e.getBlock().getZ();
-            Material type = e.getBlock().getType();
-
-            if (type.isAir()) {
-                return;
-            }
-
-            if (type == Material.BEDROCK) {
-                return;
-            }
-
-            for (int x = ox - 2; x <= ox + 2; ++x) {
-                for (int y = oy - 2; y <= oy + 2; ++y) {
-                    for (int z = oz - 2; z <= oz + 2; ++z) {
-                        Location l = new Location(e.getBlock().getWorld(), x, y, z);
-                        Block block = e.getBlock().getWorld().getBlockAt(l);
-                        if (block.getType() != type) {
-                            continue;
-                        }
-
-                        if(plugin.cm().getHasPermission(e.getPlayer(), plugin.cm().getClaim(l), 1)) {
-                            block.breakNaturally(item, true);
-                            CoreProtect.getInstance().getAPI().logRemoval(e.getPlayer().getName(), l, block.getType(), block.getBlockData());
-                        }
-                    }
-                }
-            }
-
-            e.getBlock().breakNaturally()
-        }
     }
 
     @EventHandler
