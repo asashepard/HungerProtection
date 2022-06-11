@@ -277,11 +277,11 @@ public class EventManager implements Listener {
             Material type = e.getBlock().getType();
 
             if (type.isAir()) {
-                return false;
+                return;
             }
 
             if (type == Material.BEDROCK) {
-                return false;
+                return;
             }
 
             for (int x = ox - 5; x <= ox + 5; ++x) {
