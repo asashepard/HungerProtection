@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class ClaimTopCommand extends CommandBase {
@@ -24,12 +25,14 @@ public class ClaimTopCommand extends CommandBase {
 
         HashMap<Double, String> map = new HashMap<>(); //blocks, player name
         double area;
+        long total = 0;
         for(OfflinePlayer p : plugin.getPlayerManager().getPlayers()) {
             area = 0.0;
             for(String claimID : plugin.cm().getClaims(p)) {
                 if(plugin.cm().getIsAdmin(claimID)) continue;
                 BoundingBox box = plugin.cm().getBoundingBox(claimID);
                 area += (int) box.getWidthX() * (int) box.getWidthZ();
+                total += (long) area;
             }
             while(map.containsKey(area)) area += Math.random(); //avoid overwriting
             map.put(area, p.getName());
@@ -53,9 +56,11 @@ public class ClaimTopCommand extends CommandBase {
 
         player.sendMessage(TextUtil.convertColor("&2&lLeaderboard:&r&2 Area Claimed " +
                 "&7(page " + page + " of " + (((list.size() - 1) / 10) + 1) + ")\n"));
+        DecimalFormat d = new DecimalFormat("###,###,###,###,###");
+        if(page == 1) player.sendMessage(TextUtil.convertColor("&7&oServer total: " + d.format(total) + " blocks"));
         for(int i = index; i < index + 10; i++) {
             if(i > list.size() - 1) return true;
-            player.sendMessage(TextUtil.convertColor("&a" + (i + 1) + ". &7" + map.get(list.get(i)) + "&8 - &f" + (int) Math.floor(list.get(i)) + " blocks"));
+            player.sendMessage(TextUtil.convertColor("&a" + (i + 1) + ". &7" + map.get(list.get(i)) + "&8 - &f" + d.format((int) Math.floor(list.get(i))) + " blocks"));
         }
 
         return true;

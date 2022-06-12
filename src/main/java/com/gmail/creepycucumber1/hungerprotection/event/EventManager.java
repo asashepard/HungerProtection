@@ -16,7 +16,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -245,21 +247,23 @@ public class EventManager implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
 
         if(plugin.cm().isPrivatized(e.getBlock().getLocation())) {
+            String claim = plugin.cm().getClaim(e.getBlock().getLocation());
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
-                    plugin.cm().getClaim(e.getBlock().getLocation()),
+                    claim,
                     1)) {
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
                 return;
             }
         }
 
+        String claim = plugin.cm().getClaim(e.getBlock().getLocation());
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
-                plugin.cm().getClaim(e.getBlock().getLocation()),
+                claim,
                 2)) {
-            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
             return;
         }
@@ -342,7 +346,7 @@ public class EventManager implements Listener {
                 getClaim(e),
                 level)) {
             if((level != 4 || e.getClickedBlock().getType().isInteractable()) || Tag.STAIRS.isTagged(e.getClickedBlock().getType())) //send message
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
     }
@@ -364,11 +368,12 @@ public class EventManager implements Listener {
     @EventHandler
     //dedicated lectern suppressor
     public void onLecternTakeBook(PlayerTakeLecternBookEvent e) {
+        String claim = plugin.cm().getClaim(e.getLectern().getLocation());
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
-                plugin.cm().getClaim(e.getLectern().getLocation()),
+                claim,
                 3)) {
-            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(3));
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(3) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
     }
@@ -378,11 +383,12 @@ public class EventManager implements Listener {
     public void onBoneMeal(BlockFertilizeEvent e) {
         if(e.getPlayer() == null) return;
         for(BlockState b : e.getBlocks()) {
+            String claim = plugin.cm().getClaim(b.getLocation());
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
                     plugin.cm().getClaim(b.getLocation()),
                     2)) {
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
                 return;
             }
@@ -392,11 +398,12 @@ public class EventManager implements Listener {
     @EventHandler
     //dedicated bucket suppressor
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
+        String claim = plugin.cm().getClaim(e.getBlock().getLocation());
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
-                plugin.cm().getClaim(e.getBlock().getLocation()),
+                claim,
                 2)) {
-            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
     }
@@ -405,13 +412,42 @@ public class EventManager implements Listener {
     //dedicated crop trample suppressor
     public void onCropTrample(PlayerInteractEvent e) {
         if(e.getAction().equals(Action.PHYSICAL) && e.getInteractionPoint() != null && e.getInteractionPoint().getBlock().getType().equals(Material.FARMLAND)) {
+            String claim = plugin.cm().getClaim(e.getInteractionPoint());
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
-                    plugin.cm().getClaim(e.getInteractionPoint()),
+                    claim,
                     2)) {
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    //dedicated frame suppressor
+    public void onHangingPlace(HangingPlaceEvent e) {
+        if(e.getPlayer() == null) return;
+        String claim = plugin.cm().getClaim(e.getBlock().getLocation());
+        if(!plugin.cm().getHasPermission(
+                e.getPlayer(),
+                claim,
+                2)) {
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    //dedicated frame suppressor 2
+    public void onHangingBreak(HangingBreakByEntityEvent e) {
+        if(!(e.getRemover() instanceof Player player)) return;
+        String claim = plugin.cm().getClaim(e.getEntity().getLocation());
+        if(!plugin.cm().getHasPermission(
+                player,
+                claim,
+                2)) {
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
+            e.setCancelled(true);
         }
     }
 
@@ -420,11 +456,12 @@ public class EventManager implements Listener {
     public void onVehicleDamage(VehicleDamageEvent e) {
         if(e.getAttacker() == null || !(e.getAttacker() instanceof Player player)) return;
         if(!(e.getVehicle() instanceof Minecart)) return;
+        String claim = plugin.cm().getClaim(e.getVehicle().getLocation());
         if(!plugin.cm().getHasPermission(
                 player,
-                plugin.cm().getClaim(e.getVehicle().getLocation()),
+                claim,
                 2)) {
-            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
     }
@@ -442,12 +479,13 @@ public class EventManager implements Listener {
         if(e.getRightClicked() instanceof Sheep)
             level = 5;
 
+        String claim = plugin.cm().getClaim(e.getRightClicked().getLocation());
         if(plugin.cm().isPrivatized(e.getRightClicked().getLocation())) {
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
-                    plugin.cm().getClaim(e.getRightClicked().getLocation()),
+                    claim,
                     1)) {
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
                 return;
             }
@@ -455,9 +493,9 @@ public class EventManager implements Listener {
 
         if(!plugin.cm().getHasPermission(
                 e.getPlayer(),
-                plugin.cm().getClaim(e.getRightClicked().getLocation()),
+                claim,
                 level)) {
-            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level));
+            TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(level) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
     }
@@ -467,12 +505,13 @@ public class EventManager implements Listener {
     public void onFrameRotate(PlayerInteractEntityEvent e) {
         if(e.getRightClicked() instanceof Hanging) {
 
+            String claim = plugin.cm().getClaim(e.getRightClicked().getLocation());
             if(plugin.cm().isPrivatized(e.getRightClicked().getLocation())) {
                 if(!plugin.cm().getHasPermission(
                         e.getPlayer(),
-                        plugin.cm().getClaim(e.getRightClicked().getLocation()),
+                        claim,
                         1)) {
-                    TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0));
+                    TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(0) + " from " + plugin.cm().getOwner(claim).getName());
                     e.setCancelled(true);
                     return;
                 }
@@ -480,9 +519,9 @@ public class EventManager implements Listener {
 
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
-                    plugin.cm().getClaim(e.getRightClicked().getLocation()),
+                    claim,
                     2)) {
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
             }
         }
@@ -509,11 +548,12 @@ public class EventManager implements Listener {
                 e.getEntity() instanceof Cow || e.getEntity() instanceof Sheep ||
                 e.getEntity() instanceof Pig || e.getEntity() instanceof Chicken) return;
 
+        String claim = plugin.cm().getClaim(e.getEntity().getLocation());
         if(!plugin.cm().getHasPermission(
                 player,
-                plugin.cm().getClaim(e.getEntity().getLocation()),
+                claim,
                 2)) {
-            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
     }
@@ -588,20 +628,21 @@ public class EventManager implements Listener {
                 e.getCollidedWith() instanceof AbstractVillager || e.getCollidedWith() instanceof EnderCrystal ||
                 e.getCollidedWith() instanceof Minecart || e.getCollidedWith() instanceof Boat)) return;
 
+        String claim = plugin.cm().getClaim(e.getCollidedWith().getLocation());
         if(plugin.cm().isPrivatized(e.getCollidedWith().getLocation())) {
             if(!plugin.cm().getHasPermission(
                     player,
-                    plugin.cm().getClaim(e.getCollidedWith().getLocation()),
+                    claim,
                     1)) {
-                TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(0));
+                TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(0) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
             }
         }
         else if(!plugin.cm().getHasPermission(
                 player,
-                plugin.cm().getClaim(e.getCollidedWith().getLocation()),
+                claim,
                 2)) {
-            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2));
+            TextUtil.sendActionBarMessage(player, TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
             e.setCancelled(true);
         }
         else
@@ -661,11 +702,12 @@ public class EventManager implements Listener {
         String claimID = plugin.cm().getClaim(e.getPlayer().getLocation());
         if(plugin.cm().getIsAdmin(claimID)) e.setCancelled(true);
         else if(e.getItem().getType().equals(Material.CHORUS_FRUIT)) {
+            String claim = plugin.cm().getClaim(e.getPlayer().getLocation());
             if(!plugin.cm().getHasPermission(
                     e.getPlayer(),
-                    plugin.cm().getClaim(e.getPlayer().getLocation()),
+                    claim,
                     2)) {
-                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2));
+                TextUtil.sendActionBarMessage(e.getPlayer(), TextUtil.MESSAGES.get(2) + " from " + plugin.cm().getOwner(claim).getName());
                 e.setCancelled(true);
             }
         }
