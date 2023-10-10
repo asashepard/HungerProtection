@@ -1,6 +1,11 @@
 # HungerProtection
 
-Claim utility and grief prevention for PaperMC designed loosely for use with ItsGJK/gabrieljkeller's HungerCore2.
+Minecraft claim utility and grief prevention for PaperMC version 1.18
+
+No longer maintained
+
+- Interfaces with Spigot API and other existing plugin APIs
+- Straightforward, in-game customizable, and scalable approach to managing griefing on a Minecraft server
 
 Commands:
 - /claim [(optional) help]
